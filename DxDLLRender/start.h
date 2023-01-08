@@ -128,7 +128,7 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 
 			if (Global::ScreenHigh != 0 && Global::ScreenWidth != 0)
 			{
-				RenderWatermark();
+				//RenderWatermark();
 				if (show){
 					invis(backgroundm,dotdraw );
 				}
