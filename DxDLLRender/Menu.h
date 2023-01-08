@@ -164,45 +164,45 @@ bool Hotkey(const char* label, int* k, const ImVec2& size_arg)
 
 // I will do it later
 
-//void EspPreview()
-//{
-//	static bool enabled = true;
-//	BoneList Bones[15] = {
-//		/*LF*/l_foot, l_knee, l_hip,
-//		/*RF*/r_foot, r_knee, r_hip,
-//		/*BD*/spine1, neck, head,
-//		/*LH*/l_upperarm, l_forearm, l_hand,
-//		/*RH*/r_upperarm, r_forearm, r_hand
-//	}; Vector2 BonesPos[15];
-//	ImGui::SetNextWindowSize(ImVec2(270, 400));
-//
-//	ImGui::Begin("ESP Preview", &enabled, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize);
-//	{
-//		auto cur_window = ImGui::GetCurrentWindow();
-//		ImVec2 w_pos = cur_window->Pos;
-//		if (PlayerEsp::box)
-//		{
-//			cur_window->DrawList->AddRect(ImVec2(w_pos.x + 40, w_pos.y + 60), ImVec2(w_pos.x + 200, w_pos.y + 360), ImColor(ColorsNShit::BoxColor));
-//		}
-//		if (PlayerEsp::name)
-//		{
-//			cur_window->DrawList->AddText(ImVec2{ w_pos.x + 100, w_pos.y + 30 }, ImColor(ColorsNShit::NameColor), "Korsdog");
-//		}
-//		if (PlayerEsp::healthbar2 || PlayerEsp::healthbar1)
-//		{
-//			cur_window->DrawList->AddText(ImVec2{ w_pos.x + 210, w_pos.y + 90 }, ImColor(ColorsNShit::PlayerHeath), "100");
-//		}
-//		if (PlayerEsp::distance)
-//		{
-//			cur_window->DrawList->AddText(ImVec2{ w_pos.x + 210, w_pos.y + 105 }, ImColor(ColorsNShit::DistanceColor), "400M");
-//		}
-//		if (PlayerEsp::weapon)
-//		{
-//			cur_window->DrawList->AddText(ImVec2{ w_pos.x + 100, w_pos.y + 370 }, ImColor(ColorsNShit::WeaponColor), "Wepons");
-//		}
-//	}
-//	ImGui::End();
-//}
+void EspPreview()
+{
+	static bool enabled = true;
+	BoneList Bones[15] = {
+		/*LF*/l_foot, l_knee, l_hip,
+		/*RF*/r_foot, r_knee, r_hip,
+		/*BD*/spine1, neck, head,
+		/*LH*/l_upperarm, l_forearm, l_hand,
+		/*RH*/r_upperarm, r_forearm, r_hand
+	}; Vector2 BonesPos[15];
+	ImGui::SetNextWindowSize(ImVec2(270, 400));
+
+	ImGui::Begin("ESP Preview", &enabled, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize);
+	{
+		auto cur_window = ImGui::GetCurrentWindow();
+		ImVec2 w_pos = cur_window->Pos;
+		if (PlayerEsp::box)
+		{
+			cur_window->DrawList->AddRect(ImVec2(w_pos.x + 40, w_pos.y + 60), ImVec2(w_pos.x + 200, w_pos.y + 360), ImColor(ColorsNShit::BoxColor));
+		}
+		if (PlayerEsp::name)
+		{
+			cur_window->DrawList->AddText(ImVec2{ w_pos.x + 100, w_pos.y + 30 }, ImColor(ColorsNShit::NameColor), "Korsdog");
+		}
+		if (PlayerEsp::healthbar2 || PlayerEsp::healthbar1)
+		{
+			cur_window->DrawList->AddText(ImVec2{ w_pos.x + 210, w_pos.y + 90 }, ImColor(ColorsNShit::PlayerHeath), "100");
+		}
+		if (PlayerEsp::distance)
+		{
+			cur_window->DrawList->AddText(ImVec2{ w_pos.x + 210, w_pos.y + 105 }, ImColor(ColorsNShit::DistanceColor), "400M");
+		}
+		if (PlayerEsp::weapon)
+		{
+			cur_window->DrawList->AddText(ImVec2{ w_pos.x + 100, w_pos.y + 370 }, ImColor(ColorsNShit::WeaponColor), "Wepons");
+		}
+	}
+	ImGui::End();
+}
 
 bool lang(const char* label)
 {
