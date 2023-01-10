@@ -376,7 +376,7 @@ namespace Hit
 }
 namespace Misc
 {
-
+	bool Watermark = false;
 	bool OnlyVisible = false;
 	bool health_chams = false;
 	float uptime = 15.f;

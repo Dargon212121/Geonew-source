@@ -336,73 +336,73 @@ ImVec4 rgb_to_imvec4(float r, float g, float b, float a)
 // Becouse i don't like it :)
 // if you want to turn on this shit, check start.h
 // 
-//void RenderWatermark()
-//{
-//	char name[UNLEN + 1];
-//	DWORD username_len = UNLEN + 1;
-//	GetUserNameA(name, &username_len);
-//	std::string winname = name;
-//	std::time_t result = std::time(nullptr);
-//	std::string wintime = std::asctime(std::localtime(&result));
-//	time_t lt;
-//	struct tm* t_m;
-//	lt = time(NULL);
-//	t_m = localtime(&lt);
-//
-//	int time_h = t_m->tm_hour;
-//	int time_m = t_m->tm_min;
-//	int time_s = t_m->tm_sec;
-//
-//	std::string time;
-//
-//	if (time_h < 10)
-//		time += "0";
-//
-//	time += std::to_string(time_h) + ":";
-//
-//	if (time_m < 10)
-//		time += "0";
-//
-//	time += std::to_string(time_m) + ":";
-//
-//	if (time_s < 10)
-//		time += "0";
-//
-//	time += std::to_string(time_s);
-//	float sWidth = Global::ScreenWidth;
-//	ImGuiStyle* style = &ImGui::GetStyle();
-//	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-//	ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(1, 1));
-//	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-//	ImGui::PushStyleColor(ImGuiCol_ChildBg, rgb_to_imvec4(55, 55, 255, 255));
-//	uintptr_t bn = read(Storage::gBase + 0x323F1E8, uintptr_t);
-//	std::string gamestatus;
-//	if (!bn) {
-//		gamestatus = (" | wrong version");
-//		return;
-//	}
-//	else {
-//		gamestatus = (" | valid version");
-//	}
-//	const char* _text = (u8"Geonew.cc | ");// Hi
-//	std::string _text1 = (winname.c_str());
-//	const char* _text2(" | ");
-//	const char* _text3(wintime.c_str());
-//	std::string waterka = _text + _text1 + _text2 + time + gamestatus;
-//	ImGui::SetNextWindowPos(ImVec2(sWidth - 1500 - ImGui::CalcTextSize(waterka.c_str()).x - 10, 10));
-//	ImGui::SetNextWindowSize(ImVec2(ImGui::CalcTextSize(waterka.c_str()).x + 10, 20));
-//	ImGui::Begin(xorstr("Watermark"), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-//	{
-//		ImGui::SetCursorPos(ImVec2(0, 0));
-//		ImGui::BeginChild(xorstr("##linerender"), ImVec2(ImGui::CalcTextSize(waterka.c_str()).x + 28, 2)); ImGui::EndChild();
-//
-//		ImGui::SetCursorPos(ImVec2(5, 5));
-//		ImGui::Text(waterka.c_str());
-//
-//	}
-//	ImGui::PopStyleColor();
-//	ImGui::PopStyleVar(3);
-//}
+void RenderWatermark()
+{
+	char name[UNLEN + 1];
+	DWORD username_len = UNLEN + 1;
+	GetUserNameA(name, &username_len);
+	std::string winname = name;
+	std::time_t result = std::time(nullptr);
+	std::string wintime = std::asctime(std::localtime(&result));
+	time_t lt;
+	struct tm* t_m;
+	lt = time(NULL);
+	t_m = localtime(&lt);
+
+	int time_h = t_m->tm_hour;
+	int time_m = t_m->tm_min;
+	int time_s = t_m->tm_sec;
+
+	std::string time;
+
+	if (time_h < 10)
+		time += "0";
+
+	time += std::to_string(time_h) + ":";
+
+	if (time_m < 10)
+		time += "0";
+
+	time += std::to_string(time_m) + ":";
+
+	if (time_s < 10)
+		time += "0";
+
+	time += std::to_string(time_s);
+	float sWidth = Global::ScreenWidth;
+	ImGuiStyle* style = &ImGui::GetStyle();
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(1, 1));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, rgb_to_imvec4(55, 55, 255, 255));
+	uintptr_t bn = read(Storage::gBase + 0x323F1E8, uintptr_t);
+	std::string gamestatus;
+	if (!bn) {
+		gamestatus = (" | wrong version");
+		return;
+	}
+	else {
+		gamestatus = (" | valid version");
+	}
+	const char* _text = (u8"Geonew.cc | ");// Hi
+	std::string _text1 = (winname.c_str());
+	const char* _text2(" | ");
+	const char* _text3(wintime.c_str());
+	std::string waterka = _text + _text1 + _text2 + time + gamestatus;
+	ImGui::SetNextWindowPos(ImVec2(sWidth - 1500 - ImGui::CalcTextSize(waterka.c_str()).x - 10, 10));
+	ImGui::SetNextWindowSize(ImVec2(ImGui::CalcTextSize(waterka.c_str()).x + 10, 20));
+	ImGui::Begin(xorstr("Watermark"), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+	{
+		ImGui::SetCursorPos(ImVec2(0, 0));
+		ImGui::BeginChild(xorstr("##linerender"), ImVec2(ImGui::CalcTextSize(waterka.c_str()).x + 28, 2)); ImGui::EndChild();
+
+		ImGui::SetCursorPos(ImVec2(5, 5));
+		ImGui::Text(waterka.c_str());
+
+	}
+	ImGui::PopStyleColor();
+	ImGui::PopStyleVar(3);
+}
 
 void AimTab()
 {
@@ -832,6 +832,7 @@ void ConfigTab()
 		ImGui::BeginGroup();
 		Checkbox("Background", &backgroundm);
 		Checkbox("DotDraw", &dotdraw);
+		Checkbox("Watermark", &Misc::Watermark);
 		
 		ImGui::EndGroup();
 	}

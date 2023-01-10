@@ -104,7 +104,7 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 		else
 			return oPresent(pSwapChain, SyncInterval, Flags);
 	}
-	if (GetAsyncKeyState(VK_INSERT) & 1)
+	if (GetAsyncKeyState(VK_INSERT) & 0) // i don't know
 	{
 		show = !show;
 	}
@@ -123,12 +123,17 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+
+	if (Misc::Watermark)
+	{
+		RenderWatermark();
+	}
+
 	if ( Global::Loadem )
 	{
 
 			if (Global::ScreenHigh != 0 && Global::ScreenWidth != 0)
 			{
-				//RenderWatermark();
 				if (show){
 					invis(backgroundm,dotdraw );
 				}
