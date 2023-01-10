@@ -751,17 +751,19 @@ inline void __fastcall SendProjectileAttack(void* a1, void* a2) {
 	}
 	return original_sendprojectileattack(a1, a2);
 }
-Vector3 __fastcall GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = true) { // wanna hang myself
-	auto* TargetPlayer = reinterpret_cast<BasePlayer*>(Storage::closestPlayer);
-	Vector3 dir = (PredictionP(LocalPlayer.BasePlayer->GetBoneByID(head), TargetPlayer, neck) - LocalPlayer.BasePlayer->GetBoneByID(head)).Normalized();
-	if (AimBot::pSilent && Storage::closestPlayer != NULL) {
-		inputVec = dir;
-	}
-	if (Weapons::AntiSpread) {
-		aimCone *= Weapons::spread / 100.f;
-	}
-	return original_aimconedirection(aimCone, inputVec, anywhereInside);
-}
+
+// Soooo we don't have pSilent) --- TODO
+//Vector3 __fastcall GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = true) { // wanna hang myself
+//	auto* TargetPlayer = reinterpret_cast<BasePlayer*>(Storage::closestPlayer);
+//	Vector3 dir = (PredictionP(LocalPlayer.BasePlayer->GetBoneByID(head), TargetPlayer, neck) - LocalPlayer.BasePlayer->GetBoneByID(head)).Normalized();
+//	if (AimBot::pSilent && Storage::closestPlayer != NULL) {
+//		inputVec = dir;
+//	}
+//	if (Weapons::AntiSpread) {
+//		aimCone *= Weapons::spread / 100.f;
+//	}
+//	return original_aimconedirection(aimCone, inputVec, anywhereInside);
+//}
 void __fastcall HandleRunning(void* a1, void* a2, bool wantsRun) {
 	//wantsRun = GetAsyncKeyState(0x10) && !GetAsyncKeyState(0x41) && !GetAsyncKeyState(0x53) && !GetAsyncKeyState(0x44);
 	if (Misc::omniSprint)
@@ -819,7 +821,7 @@ inline void InitHook() {
 	}//	hk_((void*)(uintptr_t)(vars::stor::gBase + CO::Play), (void**)&original_viewmodelplay, hk::misc::Play);
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::ViewModel::Play), (void**)&original_viewmodelplay, Play);
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BaseCombatEntity::DoHitNotify), (void**)&original_sound, HitSound);
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0xC01980), (void**)&original_aimconedirection, GetModifiedAimConeDirection);////public static Vector3 GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = True) { }
+	//HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0xC01980), (void**)&original_aimconedirection, GetModifiedAimConeDirection);////public static Vector3 GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = True) { }
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x2549D10), (void**)&original_consolerun, Run);//public static string Run(ConsoleSystem.Option options, string strCommand, object[] args) { }
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0xA5BB90), (void**)&original_FastBullet, GetRandomVelocity_hk); //public float GetRandomVelocity() { }
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::TOD_Sky::get_Instance), (void**)&original_mode, NightMode);

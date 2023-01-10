@@ -440,7 +440,7 @@ void AimTab()
 		ImGui::BeginGroup();
 		ImGui::Checkbox((english ? "AutoMelee" : u8"Авто удары"), &Misc::Meleeatack);
 		ImGui::Checkbox((english ? "Only Head" : u8"Только Голова"), &AimBot::AlwaysHeadshot);
-		ImGui::Checkbox((english ? "PSilent" : u8"Псало"), &AimBot::pSilent);
+		//ImGui::Checkbox((english ? "PSilent" : u8"Псало"), &AimBot::pSilent);
 		ImGui::Checkbox((english ? "ThickBullet" : u8"Жирная Пуля"), &Weapons::FatBullet);
 		ImGui::Checkbox((english ? "Anti-Aiming" : u8"Крутилка"), &AntiAim::anti_aim);
 		if (AntiAim::anti_aim) {
