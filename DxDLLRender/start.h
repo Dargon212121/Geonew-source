@@ -104,7 +104,7 @@ HRESULT __stdcall hookD3D11Present(IDXGISwapChain* pSwapChain, UINT SyncInterval
 		else
 			return oPresent(pSwapChain, SyncInterval, Flags);
 	}
-	if (GetAsyncKeyState(VK_INSERT) & 0) // i don't know
+	if (GetAsyncKeyState(VK_INSERT) & 1)
 	{
 		show = !show;
 	}

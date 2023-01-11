@@ -41,6 +41,27 @@
     <Filter Include="Offsets">
       <UniqueIdentifier>{1124938d-ed97-472b-bc33-6cda0a8cf46a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\discord">
+      <UniqueIdentifier>{884f5953-c09d-4d46-974e-4ece4e3577b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\discord\include">
+      <UniqueIdentifier>{27532fa9-8862-40f2-b290-89ccc1cc717a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\discord\src">
+      <UniqueIdentifier>{2ef0a306-d0be-429d-8986-001d1f0bc362}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\discord\src\rapidjson">
+      <UniqueIdentifier>{2786226f-925f-4d3f-a900-538734a22219}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\discord\src\rapidjson\error">
+      <UniqueIdentifier>{d09e3d54-fc96-48a1-9977-e314f99e4a51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\discord\src\rapidjson\internal">
+      <UniqueIdentifier>{1f4b4147-3b62-49a8-8fe4-16a7e5acbc25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\discord\src\rapidjson\msinttypes">
+      <UniqueIdentifier>{8d38639e-e9d3-404f-830d-14209fb388bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sdk_new\math.h">
@@ -190,6 +211,81 @@
     <ClInclude Include="headfont.h" />
     <ClInclude Include="RenderMenu.h" />
     <ClInclude Include="font.h" />
+    <ClInclude Include="discord\include\discord_register.h">
+      <Filter>source\discord\include</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\include\discord_rpc.h">
+      <Filter>source\discord\include</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\error\en.h">
+      <Filter>source\discord\src\rapidjson\error</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\error\error.h">
+      <Filter>source\discord\src\rapidjson\error</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\internal\diyfp.h">
+      <Filter>source\discord\src\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\internal\dtoa.h">
+      <Filter>source\discord\src\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\internal\ieee754.h">
+      <Filter>source\discord\src\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\internal\itoa.h">
+      <Filter>source\discord\src\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\internal\meta.h">
+      <Filter>source\discord\src\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\internal\pow10.h">
+      <Filter>source\discord\src\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\internal\regex.h">
+      <Filter>source\discord\src\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\internal\stack.h">
+      <Filter>source\discord\src\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\internal\strfunc.h">
+      <Filter>source\discord\src\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\internal\strtod.h">
+      <Filter>source\discord\src\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\internal\swap.h">
+      <Filter>source\discord\src\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\internal\biginteger.h">
+      <Filter>source\discord\src\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\internal\clzll.h">
+      <Filter>source\discord\src\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\msinttypes\inttypes.h">
+      <Filter>source\discord\src\rapidjson\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rapidjson\msinttypes\stdint.h">
+      <Filter>source\discord\src\rapidjson\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\msg_queue.h">
+      <Filter>source\discord\src</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\rpc_connection.h">
+      <Filter>source\discord\src</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\serialization.h">
+      <Filter>source\discord\src</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\backoff.h">
+      <Filter>source\discord\src</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\src\connection.h">
+      <Filter>source\discord\src</Filter>
+    </ClInclude>
+    <ClInclude Include="discord\discord.h">
+      <Filter>source\discord</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Minhook\src\HDE\hde64.c">
@@ -233,6 +329,27 @@
     </ClCompile>
     <ClCompile Include="pattern.cpp">
       <Filter>il2cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="discord\src\discord_rpc.cpp">
+      <Filter>source\discord\src</Filter>
+    </ClCompile>
+    <ClCompile Include="discord\src\dllmain.cpp">
+      <Filter>source\discord\src</Filter>
+    </ClCompile>
+    <ClCompile Include="discord\src\rpc_connection.cpp">
+      <Filter>source\discord\src</Filter>
+    </ClCompile>
+    <ClCompile Include="discord\src\serialization.cpp">
+      <Filter>source\discord\src</Filter>
+    </ClCompile>
+    <ClCompile Include="discord\src\connection_win.cpp">
+      <Filter>source\discord\src</Filter>
+    </ClCompile>
+    <ClCompile Include="discord\src\discord_register_win.cpp">
+      <Filter>source\discord\src</Filter>
+    </ClCompile>
+    <ClCompile Include="discord\Discord.cpp">
+      <Filter>source\discord</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

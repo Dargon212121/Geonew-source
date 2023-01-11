@@ -404,6 +404,8 @@ void RenderWatermark()
 	ImGui::PopStyleVar(3);
 }
 
+
+
 void AimTab()
 {
 	ImGui::SetCursorPos(ImVec2(140, 40));
@@ -833,6 +835,7 @@ void ConfigTab()
 		Checkbox("Background", &backgroundm);
 		Checkbox("DotDraw", &dotdraw);
 		Checkbox("Watermark", &Misc::Watermark);
+		//Checkbox("Discord status", &Misc::Discordstatus);
 		
 		ImGui::EndGroup();
 	}

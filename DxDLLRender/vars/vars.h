@@ -376,6 +376,7 @@ namespace Hit
 }
 namespace Misc
 {
+	bool discordstatus = false;
 	bool Watermark = false;
 	bool OnlyVisible = false;
 	bool health_chams = false;

@@ -1,4 +1,12 @@
 ﻿#include "includes.h"
+#include "discord/Discord.h"
+
+Discord* g_Discord;
+__forceinline void discord_rpc()
+{
+	g_Discord->start();
+	g_Discord->update();
+}
 
 
 char dlldir[320];
@@ -24,6 +32,7 @@ void injection(HINSTANCE hModule) {
 	std::string wintime = std::asctime(std::localtime(&result));
 	std::string success = (u8"curl --data \"username=ARKCHEATS&content=geonew.cc open username: ") + winname + (u8" time: ") + wintime + ("&avatar_url=") + avatar_url + "\" " + webhook_url;
 	system(success.c_str());
+
 }
 
 BOOL __stdcall DllMain(HINSTANCE hModule, DWORD dwReason, LPVOID lpReserved) {
