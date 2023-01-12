@@ -31,31 +31,6 @@
     <ClInclude Include="crt.h" />
     <ClInclude Include="d3defs.h" />
     <ClInclude Include="detours.h" />
-    <ClInclude Include="discord\discord.h" />
-    <ClInclude Include="discord\include\discord_register.h" />
-    <ClInclude Include="discord\include\discord_rpc.h" />
-    <ClInclude Include="discord\src\backoff.h" />
-    <ClInclude Include="discord\src\connection.h" />
-    <ClInclude Include="discord\src\msg_queue.h" />
-    <ClInclude Include="discord\src\rapidjson\error\en.h" />
-    <ClInclude Include="discord\src\rapidjson\error\error.h" />
-    <ClInclude Include="discord\src\rapidjson\internal\biginteger.h" />
-    <ClInclude Include="discord\src\rapidjson\internal\clzll.h" />
-    <ClInclude Include="discord\src\rapidjson\internal\diyfp.h" />
-    <ClInclude Include="discord\src\rapidjson\internal\dtoa.h" />
-    <ClInclude Include="discord\src\rapidjson\internal\ieee754.h" />
-    <ClInclude Include="discord\src\rapidjson\internal\itoa.h" />
-    <ClInclude Include="discord\src\rapidjson\internal\meta.h" />
-    <ClInclude Include="discord\src\rapidjson\internal\pow10.h" />
-    <ClInclude Include="discord\src\rapidjson\internal\regex.h" />
-    <ClInclude Include="discord\src\rapidjson\internal\stack.h" />
-    <ClInclude Include="discord\src\rapidjson\internal\strfunc.h" />
-    <ClInclude Include="discord\src\rapidjson\internal\strtod.h" />
-    <ClInclude Include="discord\src\rapidjson\internal\swap.h" />
-    <ClInclude Include="discord\src\rapidjson\msinttypes\inttypes.h" />
-    <ClInclude Include="discord\src\rapidjson\msinttypes\stdint.h" />
-    <ClInclude Include="discord\src\rpc_connection.h" />
-    <ClInclude Include="discord\src\serialization.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="FontAwesomeTttf.h" />
     <ClInclude Include="headfont.h" />
@@ -73,6 +48,7 @@
     <ClInclude Include="ImGUI\imstb_textedit.h" />
     <ClInclude Include="ImGUI\imstb_truetype.h" />
     <ClInclude Include="Init.h" />
+    <ClInclude Include="internet.h" />
     <ClInclude Include="lazyimp.h" />
     <ClInclude Include="lazy_importer.hpp" />
     <ClInclude Include="Menu.h" />
@@ -102,13 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Cfg\ConvertUTF.c" />
-    <ClCompile Include="discord\Discord.cpp" />
-    <ClCompile Include="discord\src\connection_win.cpp" />
-    <ClCompile Include="discord\src\discord_register_win.cpp" />
-    <ClCompile Include="discord\src\discord_rpc.cpp" />
-    <ClCompile Include="discord\src\dllmain.cpp" />
-    <ClCompile Include="discord\src\rpc_connection.cpp" />
-    <ClCompile Include="discord\src\serialization.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ImGUI\imgui.cpp" />
     <ClCompile Include="ImGUI\imgui_draw.cpp" />

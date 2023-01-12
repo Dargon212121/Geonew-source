@@ -1,38 +1,36 @@
-﻿E:\Visual studio\Visual studio\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(1101,5): warning MSB8027: два или более файлов с именем dllmain.cpp выводят результаты в одно и то же расположение. Это может стать причиной неверного результата сборки.  Включенные файлы — discord\src\dllmain.cpp, dllmain.cpp.
-cl : командная строка  warning D9002: пропуск неизвестного параметра "/arch:SSE2"
-cl : командная строка  warning D9002: пропуск неизвестного параметра "/arch:SSE2"
-  Discord.cpp
-cl : командная строка  warning D9002: пропуск неизвестного параметра "/arch:SSE2"
+﻿cl : командная строка  warning D9002: пропуск неизвестного параметра "/arch:SSE2"
   dllmain.cpp
 E:\Visual studio\Visual studio\VC\Tools\MSVC\14.33.31629\include\xstring(2824,53): warning C4244: аргумент: преобразование "wchar_t" в "const _Elem", возможна потеря данных
           with
           [
               _Elem=char
-          ] (компилируется исходный файл dllmain.cpp)
+          ]
 E:\Visual studio\Visual studio\VC\Tools\MSVC\14.33.31629\include\xstring(2664): message : выполняется компиляция ссылки на экземпляр шаблон функции "void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<wchar_t*>(_Iter,const _Iter)"
           with
           [
               _Iter=wchar_t *
-          ] (компилируется исходный файл dllmain.cpp)
+          ]
 E:\Visual studio\Visual studio\VC\Tools\MSVC\14.33.31629\include\xstring(2664): message : выполняется компиляция ссылки на экземпляр шаблон функции "void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<wchar_t*>(_Iter,const _Iter)"
           with
           [
               _Iter=wchar_t *
-          ] (компилируется исходный файл dllmain.cpp)
+          ]
 E:\GitHub\Geonew-source\DxDLLRender\sdk\sdk.h(854): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
           with
           [
               _Elem=wchar_t,
               _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
               _Alloc=std::allocator<char>
-          ] (компилируется исходный файл dllmain.cpp)
+          ]
 E:\GitHub\Geonew-source\DxDLLRender\sdk\sdk.h(854): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
           with
           [
               _Elem=wchar_t,
               _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
               _Alloc=std::allocator<char>
-          ] (компилируется исходный файл dllmain.cpp)
-E:\GitHub\Geonew-source\x64\Release\dllmain.obj : warning LNK4042: объект указан более одного раза; лишние не учитываются
-dllmain.obj : error LNK2001: неразрешенный внешний символ "public: void __cdecl Discord::update(void)" (?update@Discord@@QEAAXXZ).
-E:\GitHub\Geonew-source\x64\Release\deobebra.dll : fatal error LNK1120: неразрешенных внешних элементов: 1
+          ]
+  LINK : указан параметр /LTCG, но не требуется создание кода; удалите /LTCG из командной строки компоновки для повышения производительности компоновщика
+detours.lib(detours.obj) : warning LNK4099: "detours.pdb" PDB не найден с "detours.lib(detours.obj)" или на "E:\GitHub\Geonew-source\x64\Release\detours.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+detours.lib(disasm.obj) : warning LNK4099: "detours.pdb" PDB не найден с "detours.lib(disasm.obj)" или на "E:\GitHub\Geonew-source\x64\Release\detours.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+detours.lib(modules.obj) : warning LNK4099: "detours.pdb" PDB не найден с "detours.lib(modules.obj)" или на "E:\GitHub\Geonew-source\x64\Release\detours.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+  DxDLLRender.vcxproj -> E:\GitHub\Geonew-source\x64\Release\deobebra.dll

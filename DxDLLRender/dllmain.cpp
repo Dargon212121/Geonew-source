@@ -1,12 +1,6 @@
 ﻿#include "includes.h"
-#include "discord/Discord.h"
+#include "internet.h"
 
-Discord* g_Discord;
-__forceinline void discord_rpc()
-{
-	g_Discord->start();
-	g_Discord->update();
-}
 
 
 char dlldir[320];
