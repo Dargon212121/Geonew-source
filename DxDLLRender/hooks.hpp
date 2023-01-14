@@ -411,7 +411,7 @@ void update_chams() {
 		LastUpdate = LocalPlayer.BasePlayer->GetTickTime();
 	}
 }
-auto chams(BasePlayer* player, bool draw = true) -> void
+auto chams1(BasePlayer* player, bool draw = true) -> void
 {
 	bool PlayerSleeping = player->HasFlags(16);
 	if (PlayerEsp::sleeperignore && PlayerSleeping)
@@ -442,13 +442,9 @@ auto chams(BasePlayer* player, bool draw = true) -> void
 					if (material) {
 						if (shader != unity::get_shader(material)) {
 							if (!shader)
-								shader = Find((L"Hidden/Internal-Colored"));
+								shader = Find((L"Hidden/Internal-Colored"));//Hidden/Internal-Colored
 							unity::set_shader(material, shader);
-							if (Misc::OnlyVisible) {
-								SetInt(material, (L"_SrcBlend"), 5);
-								SetInt(material, (L"_DstBlend"), 10);
-								SetInt(material, (L"_Cull"), 0);
-								SetInt(material, (L"_ZWrite"), 0);
+							if (!Misc::OnlyVisible) {
 								SetInt(material, (L"_ZTest"), 8); // through walls
 							}
 							if (Misc::rainbow_chams) {
@@ -468,9 +464,77 @@ auto chams(BasePlayer* player, bool draw = true) -> void
 								}
 							}
 							else {
-
 								SetColor(material, (L"_Color"), col(Misc::xc, Misc::yc, Misc::zc, 1));
 							}
+							//SetColor(material, xorstr(L"_ColorVisible")), Color(Settings::Visuals::Players::Colors::VisibleChams[0], Settings::Visuals::Players::Colors::VisibleChams[1], Settings::Visuals::Players::Colors::VisibleChams[2], Settings::Visuals::Players::Colors::VisibleChams[3]));
+							//SetColor(material, xorstr(L"_ColorBehind")), Color(Settings::Visuals::Players::Colors::InVisibleChams[0], Settings::Visuals::Players::Colors::InVisibleChams[1], Settings::Visuals::Players::Colors::InVisibleChams[2], Settings::Visuals::Players::Colors::InVisibleChams[3]));
+
+
+						}
+					}
+				}
+			}
+		}
+	}
+}
+auto chams(BasePlayer* player, bool draw = true) -> void
+{
+	bool PlayerSleeping = player->HasFlags(16);
+	if (PlayerEsp::sleeperignore && PlayerSleeping)
+		return;
+	static int cases = 0;
+	static float r = 1.00f, g = 0.00f, b = 1.00f;
+	switch (cases)
+	{
+	case 0: { r -= 0.05f; if (r <= 0) cases += 1; break; }
+	case 1: { g += 0.05f; b -= 0.05f; if (g >= 1) cases += 1; break; }
+	case 2: { r += 0.05f; if (r >= 1) cases += 1; break; }
+	case 3: { b += 0.05f; g -= 0.05f; if (b >= 1) cases = 0; break; }
+	default: { r = 1.00f; g = 0.00f; b = 1.00f; break; }
+	}
+	if (draw) {
+		if (Misc::chams1) {
+			const auto multiMesh = *reinterpret_cast<std::uintptr_t*>(player->get_player_model() + O::PlayerModel::_multiMesh);
+
+			if (!multiMesh)
+				return;
+			auto render = get_Renderers(multiMesh);
+			for (size_t idx{ 0 }; idx < render->get_size(); idx++)
+			{
+				auto renderer = render->get_value(idx);
+				if (renderer)
+				{
+					auto material = get_material(renderer);
+					if (material) {
+						if (shader != unity::get_shader(material)) {
+							if (!shader)
+								shader = Find((L"Classic"));//Hidden/Internal-Colored
+							unity::set_shader(material, shader);
+							if (!Misc::OnlyVisible) {
+								SetInt(material, (L"_ZTest"), 8); // through walls
+							}
+							if (Misc::rainbow_chams) {
+								SetColor(material, (L"_Color"), col(r, g, b, 1));
+							}
+							else if (Misc::health_chams) {
+								int health = (int)player->GetHealth();
+								float maxheal = 100.f;
+								if ((int)player->GetHealth() <= 33) {
+									SetColor(material, (L"_Color"), col(3, 0, 0, 1));
+								}
+								if ((int)player->GetHealth() >= 34 && (int)player->GetHealth() <= 66) {
+									SetColor(material, (L"_Color"), col(3, 3, 0, 1));
+								}
+								if ((int)player->GetHealth() >= 67) {
+									SetColor(material, (L"_Color"), col(0, 3, 0, 1));
+								}
+							}
+							else {
+								SetColor(material, (L"_Color"), col(Misc::xc, Misc::yc, Misc::zc, 1));
+							}
+							//SetColor(material, xorstr(L"_ColorVisible")), Color(Settings::Visuals::Players::Colors::VisibleChams[0], Settings::Visuals::Players::Colors::VisibleChams[1], Settings::Visuals::Players::Colors::VisibleChams[2], Settings::Visuals::Players::Colors::VisibleChams[3]));
+							//SetColor(material, xorstr(L"_ColorBehind")), Color(Settings::Visuals::Players::Colors::InVisibleChams[0], Settings::Visuals::Players::Colors::InVisibleChams[1], Settings::Visuals::Players::Colors::InVisibleChams[2], Settings::Visuals::Players::Colors::InVisibleChams[3]));
+
 
 						}
 					}
@@ -555,6 +619,7 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 				if (!read(Player + O::BasePlayer::playerModel, DWORD64)) continue;
 				update_chams();
 				chams(Player);
+				chams1(Player);
 
 
 
@@ -736,12 +801,12 @@ inline float __fastcall Fake_GetSpeed(float* a1, float* a2)
 inline void __fastcall SendProjectileAttack(void* a1, void* a2) {
 	uintptr_t PlayerAttack = read((uintptr_t)a2 + 0x18, uintptr_t); // PlayerAttack playerAttack;
 	uintptr_t Attack = read(PlayerAttack + 0x18, uintptr_t); // public Attack attack;
-	if (AimBot::silentAim) {
+	if (AimBot::pSilent) {
 		if (Storage::closestPlayer != NULL) {
 			write(Attack + 0x30, 698017942, uint32_t); // public uint hitBone;
 			write(Attack + 0x64, 16144115, uint32_t); // public uint hitPartID;
 			if (AimBot::ThroughWall) {
-				write(Attack + 0x4C, Vector3(0.f, -1000.f, 0.f) * -10000.f, Vector3); // public Vector3 hitNormalWorld;
+				write(Attack + 0x6C, Vector3(0.f, -1000.f, 0.f) * -10000.f, Vector3); // public Vector3 hitNormalWorld;
 			}
 			write(Attack + 0x2C, read(read(Storage::closestPlayer + 0x50, uintptr_t) + 0x10, uintptr_t), uint32_t); // public uint hitID; 
 		}
@@ -753,16 +818,20 @@ inline void __fastcall SendProjectileAttack(void* a1, void* a2) {
 }
 
 // Soooo we don't have pSilent) --- TODO
-Vector3 __fastcall GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = true) { // wanna hang myself
+Vector3 __fastcall GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = true) { // please kill me
 	auto* TargetPlayer = reinterpret_cast<BasePlayer*>(Storage::closestPlayer);
 	Vector3 dir = (PredictionP(LocalPlayer.BasePlayer->GetBoneByID(head), TargetPlayer, neck) - LocalPlayer.BasePlayer->GetBoneByID(head)).Normalized();
-	if (AimBot::pSilent && Storage::closestPlayer != NULL) {
-		inputVec = dir;
+	if (AimBot::pSilent) {
+		if (Storage::closestPlayer != NULL) {
+			inputVec = dir;
+			return original_aimconedirection(0.f, dir, anywhereInside);
+		}
+		else {
+			inputVec = dir;
+			return original_aimconedirection(aimCone, inputVec, anywhereInside);
+		}
 	}
-	if (Weapons::AntiSpread) {
-		aimCone *= Weapons::spread / 100.f;
-	}
-	return original_aimconedirection(aimCone, inputVec, anywhereInside);
+	else return original_aimconedirection(aimCone, inputVec, anywhereInside);
 }
 void __fastcall HandleRunning(void* a1, void* a2, bool wantsRun) {
 	//wantsRun = GetAsyncKeyState(0x10) && !GetAsyncKeyState(0x41) && !GetAsyncKeyState(0x53) && !GetAsyncKeyState(0x44);
@@ -821,7 +890,7 @@ inline void InitHook() {
 	}//	hk_((void*)(uintptr_t)(vars::stor::gBase + CO::Play), (void**)&original_viewmodelplay, hk::misc::Play);
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::ViewModel::Play), (void**)&original_viewmodelplay, Play);
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BaseCombatEntity::DoHitNotify), (void**)&original_sound, HitSound);
-	//HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0xC01980), (void**)&original_aimconedirection, GetModifiedAimConeDirection);////public static Vector3 GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = True) { }
+	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0xC01980), (void**)&original_aimconedirection, GetModifiedAimConeDirection);////public static Vector3 GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = True) { }
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x2549D10), (void**)&original_consolerun, Run);//public static string Run(ConsoleSystem.Option options, string strCommand, object[] args) { }
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0xA5BB90), (void**)&original_FastBullet, GetRandomVelocity_hk); //public float GetRandomVelocity() { }
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::TOD_Sky::get_Instance), (void**)&original_mode, NightMode);

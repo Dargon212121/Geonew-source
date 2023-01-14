@@ -161,9 +161,7 @@ bool Hotkey(const char* label, int* k, const ImVec2& size_arg)
 	return value_changed;
 }
 
-
 // I will do it later
-
 void EspPreview()
 {
 	static bool enabled = true;
@@ -180,15 +178,27 @@ void EspPreview()
 	{
 		auto cur_window = ImGui::GetCurrentWindow();
 		ImVec2 w_pos = cur_window->Pos;
+		//if (PlayerEsp::skeleton)
+		//{
+		//	cur_window->DrawList->AddRect(ImVec2(w_pos.x + 40, w_pos.y + 60), ImVec2(w_pos.x + 200, w_pos.y + 360), ImColor(ColorsNShit::SkeletonColor));
+		//}
+		//if (Misc::chams)
+		//{
+		//	cur_window->DrawList->AddRect(ImVec2(w_pos.x + 40, w_pos.y + 60), ImVec2(w_pos.x + 200, w_pos.y + 360), ImColor(ColorsNShit::ChamsESP));
+		//}
+		if (PlayerEsp::healthbar1)
+		{
+			cur_window->DrawList->AddRectFilled(ImVec2(w_pos.x + 34, w_pos.y + 60), ImVec2(w_pos.x + 37, w_pos.y + 360), ImColor(ColorsNShit::HpBar));
+		}
 		if (PlayerEsp::box)
 		{
 			cur_window->DrawList->AddRect(ImVec2(w_pos.x + 40, w_pos.y + 60), ImVec2(w_pos.x + 200, w_pos.y + 360), ImColor(ColorsNShit::BoxColor));
 		}
 		if (PlayerEsp::name)
 		{
-			cur_window->DrawList->AddText(ImVec2{ w_pos.x + 100, w_pos.y + 30 }, ImColor(ColorsNShit::NameColor), "Korsdog");
+			cur_window->DrawList->AddText(ImVec2{ w_pos.x + 100, w_pos.y + 30 }, ImColor(ColorsNShit::NameColor), "Holmes");
 		}
-		if (PlayerEsp::healthbar2 || PlayerEsp::healthbar1)
+		if (PlayerEsp::healthbar2)
 		{
 			cur_window->DrawList->AddText(ImVec2{ w_pos.x + 210, w_pos.y + 90 }, ImColor(ColorsNShit::PlayerHeath), "100");
 		}
@@ -429,7 +439,7 @@ void AimTab()
 			ImGui::Checkbox((english ? "Fill Fov" : u8"Заливка"), &AimBot::FillFov);
 
 		}
-		if (AimBot::Activate || AimBot::silentAim == true) {
+		if (AimBot::Activate || AimBot::pSilent == true) {
 			ImGui::SliderFloat((english ? "Set Fov" : u8"Радиус"), &AimBot::Fov, 20.f, 200.f);
 			ImGui::SliderFloat((english ? "Aim Dist" : u8"Дистанция"), &AimBot::Range, 0.f, 400.f);
 		}
@@ -443,7 +453,7 @@ void AimTab()
 		ImGui::Checkbox((english ? "AutoMelee" : u8"Авто удары"), &Misc::Meleeatack);
 		ImGui::Checkbox((english ? "Only Head" : u8"Только Голова"), &AimBot::AlwaysHeadshot);
 		ImGui::Checkbox((english ? "PSilent" : u8"Псало"), &AimBot::pSilent);
-		ImGui::Checkbox((english ? "Silent" : u8"Cало"), &AimBot::silentAim);
+		//ImGui::Checkbox((english ? "Silent" : u8"Cало"), &AimBot::silentAim);
 		ImGui::Checkbox((english ? "ThickBullet" : u8"Жирная Пуля"), &Weapons::FatBullet);
 		ImGui::Checkbox((english ? "Anti-Aiming" : u8"Крутилка"), &AntiAim::anti_aim);
 		if (AntiAim::anti_aim) {
@@ -459,6 +469,7 @@ void AimTab()
 }
 void VisualsTab()
 {
+	//EspPreview();
 	ImGui::SetCursorPos(ImVec2(140, 40));
 	ImGui::BeginChild(english ? "Players" : u8"Игроки", ImVec2(193, 300));
 	{
@@ -538,6 +549,11 @@ void VisualsTab()
 	ImGui::BeginChild(english ? "Other Visuals" : u8"Остальное", ImVec2(193, 300));
 	{
 		ImGui::BeginGroup();
+		ImGui::Checkbox((english ? "Esp Preview" : u8"Esp Preview"), &Visuals::EspPreview);
+		if (Visuals::EspPreview == true)
+		{
+			EspPreview();
+		}
 		if (ImGui::BeginCombo(english ? "Crosshair" : u8"Прицел", english ? "Chose Crosshair" : u8"Выбрать прицел")) {
 
 			ImGui::Checkbox((english ? "Defolt" : u8"Обычный"), &AimBot::Crosshair);
@@ -728,7 +744,8 @@ void MiscTab()
 		CheckboxX(("InfinityJump"), u8"Бесконечный прыжок", &Misc::InfJump);
 		Hotkey(english ? "LongNeck Key" : u8"Длинная шея", &Misc::longKey, ImVec2(150, 15));
 		ImGui::Checkbox(("Trace Bullet"), &Weapons::bullet_trace);
-		Checkbox(xorstr("Rayleigh Changer"), &Misc::rayleigh_changer);
+		ImGui::Checkbox(("Fast loot"), &Misc::FastLoot);
+		ImGui::Checkbox(xorstr("Rayleigh Changer"), &Misc::rayleigh_changer);
 		if (Misc::rayleigh_changer) {
 			ImGui::SliderFloat(xorstr("Rayleigh Amount"), &Misc::rayleigh, 1.f, 50.f);
 		}
@@ -765,10 +782,10 @@ void OtherTab()
 	ImGui::BeginChild("Radar", ImVec2(193, 300));
 	{
 		ImGui::BeginGroup();
-		Checkbox("Enable", &Vars1::Radar::Enable);
-		Checkbox("ShowRadarBackground", &Vars1::Radar::ShowRadarBackground);
-		Checkbox("ShowRadarPlayer", &Vars1::Radar::ShowRadarPlayer);
-		Checkbox("ShowRadarSleeper", &Vars1::Radar::ShowRadarSleeper);
+		ImGui::Checkbox("Enable", &Vars1::Radar::Enable);
+		ImGui::Checkbox("ShowRadarBackground", &Vars1::Radar::ShowRadarBackground);
+		ImGui::Checkbox("ShowRadarPlayer", &Vars1::Radar::ShowRadarPlayer);
+		ImGui::Checkbox("ShowRadarSleeper", &Vars1::Radar::ShowRadarSleeper);
 		ImGui::Spacing();
 		ImGui::Spacing();
 		ImGui::Spacing();
@@ -833,9 +850,9 @@ void ConfigTab()
 	ImGui::BeginChild("Other", ImVec2(193, 300));
 	{
 		ImGui::BeginGroup();
-		Checkbox("Background", &backgroundm);
-		Checkbox("DotDraw", &dotdraw);
-		Checkbox("Watermark", &Misc::Watermark);
+		ImGui::Checkbox("Background", &backgroundm);
+		ImGui::Checkbox("DotDraw", &dotdraw);
+		ImGui::Checkbox("Watermark", &Misc::Watermark);
 		//Checkbox("Discord status", &Misc::Discordstatus);
 		
 		ImGui::EndGroup();

@@ -179,6 +179,7 @@ namespace Positions
 }
 namespace Visuals
 {
+	bool EspPreview = false;
 	bool visualize_prediction = false;
 	bool Berry = false;
 	bool BerryDistance = false;
@@ -410,6 +411,7 @@ namespace Misc
 	bool gravity = false;
 	float max;
 	bool chams = false;
+	bool chams1 = false;
 	bool speedhack = false;
 	bool AutoFarm = false;
 	bool AutoFarmOre = false;
