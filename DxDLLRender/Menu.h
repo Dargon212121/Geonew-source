@@ -429,7 +429,7 @@ void AimTab()
 			ImGui::Checkbox((english ? "Fill Fov" : u8"Заливка"), &AimBot::FillFov);
 
 		}
-		if (AimBot::Activate || AimBot::pSilent == true) {
+		if (AimBot::Activate || AimBot::silentAim == true) {
 			ImGui::SliderFloat((english ? "Set Fov" : u8"Радиус"), &AimBot::Fov, 20.f, 200.f);
 			ImGui::SliderFloat((english ? "Aim Dist" : u8"Дистанция"), &AimBot::Range, 0.f, 400.f);
 		}
@@ -442,7 +442,8 @@ void AimTab()
 		ImGui::BeginGroup();
 		ImGui::Checkbox((english ? "AutoMelee" : u8"Авто удары"), &Misc::Meleeatack);
 		ImGui::Checkbox((english ? "Only Head" : u8"Только Голова"), &AimBot::AlwaysHeadshot);
-		//ImGui::Checkbox((english ? "PSilent" : u8"Псало"), &AimBot::pSilent);
+		ImGui::Checkbox((english ? "PSilent" : u8"Псало"), &AimBot::pSilent);
+		ImGui::Checkbox((english ? "Silent" : u8"Cало"), &AimBot::silentAim);
 		ImGui::Checkbox((english ? "ThickBullet" : u8"Жирная Пуля"), &Weapons::FatBullet);
 		ImGui::Checkbox((english ? "Anti-Aiming" : u8"Крутилка"), &AntiAim::anti_aim);
 		if (AntiAim::anti_aim) {
@@ -841,6 +842,28 @@ void ConfigTab()
 	}
 	ImGui::EndChild();
 }
+void CreditsTab() {
+	ImGui::SetCursorPos(ImVec2(140, 40));
+	ImGui::BeginChild("Credits", ImVec2(394, 300));
+	{
+		ImGui::BeginGroup();
+		ImGui::Text("Hello UserName, I'm Holmes#3149!");
+		ImGui::Text("This cheat leked by Poves#4495, \nI am only update this cheat");
+
+		if (ImGui::Button(("My discord")))
+		{
+			system("start https://discord.gg/hmWmarjPz4");
+		}
+		ImGui::SameLine();
+		if (ImGui::Button(("Poves discord")))
+		{
+			system("start https://discord.gg/uw9W8nyGT9");
+		}
+		ImGui::EndGroup();
+	}
+	ImGui::EndChild();
+
+}
 
 ImFont* initx;
 void Init()
@@ -879,11 +902,11 @@ void Init()
 	front->PathStroke(ImGui::GetColorU32(fore_color.Value), 0, thickness);
 	ImGui::PushFont(initx);
 	ImVec2 inject = ImGui::CalcTextSize(xorstr(u8"Initialization Geonew.cc"));
-	ImVec2 discord = ImGui::CalcTextSize(xorstr(u8"Poves#4495"));
+	ImVec2 discord = ImGui::CalcTextSize(xorstr(u8"Holmes#3149"));
 	auto MiddleX = Global::ScreenWidth / 2;
 	auto MiddleY = Global::ScreenHigh / 2;
 	front->AddText({ MiddleX - inject.x / 2 + 3, MiddleY + 35 }, ImColor(255, 255, 255), xorstr(u8"Initialization Geonew.cc"));
-	front->AddText({ MiddleX - discord.x / 2 + 3, MiddleY + 515 }, ImColor(255, 255, 255), xorstr(u8"Poves#4495"));
+	front->AddText({ MiddleX - discord.x / 2 + 3, MiddleY + 515 }, ImColor(255, 255, 255), xorstr(u8"Holmes#3149"));
 	ImGui::PopFont();
 
 	// Reset animation
@@ -965,6 +988,7 @@ void invis(bool background, bool dotdraw)
 			if (tab("Misc", tabs == 2)) tabs = 2;
 			if (tab("Other", tabs == 3)) tabs = 3;
 			if (tab("Config", tabs == 4)) tabs = 4;
+			if (tab("Credits", tabs == 5)) tabs = 5;
 
 			ImGui::PopStyleVar();
 		}
@@ -977,6 +1001,7 @@ void invis(bool background, bool dotdraw)
 		case 2: MiscTab();   break;
 		case 3: OtherTab();   break;
 		case 4: ConfigTab();   break;
+		case 5: CreditsTab();   break;
 		}
 	}
 	ImGui::End();

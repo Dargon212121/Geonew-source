@@ -137,7 +137,7 @@ void StepConstant(Vector2& angles) {
 	}
 }
 
-void do_aimbot(BasePlayer* player) {
+void do_aimbot(BasePlayer* player) { // by plusminus
 	if (!LocalPlayer.BasePlayer || !player) { return; }
 	if (!LocalPlayer.BasePlayer->GetActiveWeapon() || player->IsDestroyed()) { return; }
 	bool long_neck = Misc::LongNeck && GetAsyncKeyState(Misc::longKey);

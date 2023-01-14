@@ -753,17 +753,17 @@ inline void __fastcall SendProjectileAttack(void* a1, void* a2) {
 }
 
 // Soooo we don't have pSilent) --- TODO
-//Vector3 __fastcall GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = true) { // wanna hang myself
-//	auto* TargetPlayer = reinterpret_cast<BasePlayer*>(Storage::closestPlayer);
-//	Vector3 dir = (PredictionP(LocalPlayer.BasePlayer->GetBoneByID(head), TargetPlayer, neck) - LocalPlayer.BasePlayer->GetBoneByID(head)).Normalized();
-//	if (AimBot::pSilent && Storage::closestPlayer != NULL) {
-//		inputVec = dir;
-//	}
-//	if (Weapons::AntiSpread) {
-//		aimCone *= Weapons::spread / 100.f;
-//	}
-//	return original_aimconedirection(aimCone, inputVec, anywhereInside);
-//}
+Vector3 __fastcall GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = true) { // wanna hang myself
+	auto* TargetPlayer = reinterpret_cast<BasePlayer*>(Storage::closestPlayer);
+	Vector3 dir = (PredictionP(LocalPlayer.BasePlayer->GetBoneByID(head), TargetPlayer, neck) - LocalPlayer.BasePlayer->GetBoneByID(head)).Normalized();
+	if (AimBot::pSilent && Storage::closestPlayer != NULL) {
+		inputVec = dir;
+	}
+	if (Weapons::AntiSpread) {
+		aimCone *= Weapons::spread / 100.f;
+	}
+	return original_aimconedirection(aimCone, inputVec, anywhereInside);
+}
 void __fastcall HandleRunning(void* a1, void* a2, bool wantsRun) {
 	//wantsRun = GetAsyncKeyState(0x10) && !GetAsyncKeyState(0x41) && !GetAsyncKeyState(0x53) && !GetAsyncKeyState(0x44);
 	if (Misc::omniSprint)
