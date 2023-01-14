@@ -219,15 +219,24 @@ inline bool __fastcall CanAttack(void* a1, void* a2) {
 	return original_canattack(a1, a2);
 }
 
-pUncStr __fastcall Run(uintptr_t options, pUncStr strCommand, DWORD64 args) {
-	bool IsFromServer = read(options + 0x6, bool);
-	if (IsFromServer) {
-		std::wstring cmd = std::wstring(strCommand->str);
-		if (cmd.find(L"noclip") != std::wstring::npos || cmd.find(L"debugcamera") != std::wstring::npos || cmd.find(L"camspeed") != std::wstring::npos || cmd.find(L"admintime") != std::wstring::npos) {
-			strCommand = nullptr;
-		}
+//pUncStr __fastcall Run(uintptr_t options, pUncStr strCommand, DWORD64 args) {
+//	bool IsFromServer = read(options + 0x6, bool);
+//	if (IsFromServer) {
+//		std::wstring cmd = std::wstring(strCommand->str);
+//		if (cmd.find(L"noclip") != std::wstring::npos || cmd.find(L"debugcamera") != std::wstring::npos || cmd.find(L"camspeed") != std::wstring::npos || cmd.find(L"admintime") != std::wstring::npos) {
+//			strCommand = nullptr;
+//		}
+//	}
+//	return original_consolerun(options, strCommand, args);
+//}
+
+void FakeAdmin()
+{
+	if (Misc::FakeAdmin)
+	{
+		int Flags = read((const uintptr_t) + O::BasePlayer::playerFlags, int);
+		write((const uintptr_t) + O::BasePlayer::playerFlags, (Flags |= 4), int);
 	}
-	return original_consolerun(options, strCommand, args);
 }
 
 void HitSound(BaseCombatEntity* entity, HitInfo* Info) {
@@ -840,11 +849,11 @@ void __fastcall HandleRunning(void* a1, void* a2, bool wantsRun) {
 
 	return original_handleRunning(a1, a2, wantsRun);
 }
-void __fastcall SetFlying(void* a1, void* a2)
-{
-	if (Misc::FakeAdmin)
-		return;
-}
+//void __fastcall SetFlying(void* a1, void* a2)
+//{
+//	if (Misc::FakeAdmin)
+//		return;
+//}
 
 
 
@@ -891,10 +900,10 @@ inline void InitHook() {
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::ViewModel::Play), (void**)&original_viewmodelplay, Play);
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BaseCombatEntity::DoHitNotify), (void**)&original_sound, HitSound);
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0xC01980), (void**)&original_aimconedirection, GetModifiedAimConeDirection);////public static Vector3 GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = True) { }
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x2549D10), (void**)&original_consolerun, Run);//public static string Run(ConsoleSystem.Option options, string strCommand, object[] args) { }
+	//HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x2549D10), (void**)&original_consolerun, Run);//public static string Run(ConsoleSystem.Option options, string strCommand, object[] args) { }
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0xA5BB90), (void**)&original_FastBullet, GetRandomVelocity_hk); //public float GetRandomVelocity() { }
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::TOD_Sky::get_Instance), (void**)&original_mode, NightMode);
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::ModelState::set_flying), (void**)&original_setflying, SetFlying);
+	//HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::ModelState::set_flying), (void**)&original_setflying, SetFlying);
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BasePlayer::SendProjectileAttack /*no change */), (void**)&original_sendprojectileattack, SendProjectileAttack);
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BasePlayer::CanAttack /*no change */), (void**)&original_canattack, CanAttack);
 	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BasePlayer::SendClientTick /*no change */), (void**)&original_sendclienttick, SendClientTick);

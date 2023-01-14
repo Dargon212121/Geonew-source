@@ -753,7 +753,7 @@ void MiscTab()
 		if (Misc::CustomTime) {
 			ImGui::SliderFloat(("Time-value"), &Misc::Time, 0.f, 12.f);
 		}
-		HelpCheckbox(("Fake-Admin"), &Misc::FakeAdmin, "I didn't do bypass, don't use it");
+		HelpCheckbox(("Fake-Admin"), &Misc::FakeAdmin, "My be crash, But i bypassed it))) ");
 		ImGui::Checkbox((english ? "Jump-Aiming" : u8"јим в прыжке"), &Weapons::jumpAim);
 		ImGui::Checkbox(("Omni-Sprint"), &Misc::omniSprint);
 		ImGui::Checkbox(("Speed-hack"), &Misc::speedhack);
