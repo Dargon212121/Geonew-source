@@ -163,6 +163,8 @@ enum PlayerFlags : int
 };
 class BasePlayer;
 BasePlayer* target_ply = nullptr;
+class mylPlayer;
+
 class Bone {
 public:
 	Vector3 position_bebra;
@@ -950,6 +952,8 @@ public:
 		return *reinterpret_cast<unsigned long*>((uintptr_t)this + 0x20);
 	}
 };
+
+
 class BasePlayer
 {
 public:
@@ -982,6 +986,56 @@ public:
 			auto static_fields = read(klass + 0xB8, DWORD64);
 			write(static_fields + 0x18, Misc::FovRange, float);
 	}
+
+	void walkOnWater() {
+		if (GetAsyncKeyState(Keys::walkonWaterKey)) {
+			Write<float>(this->playerMovement + O::PlayerWalkMovement::groundAngle, 0.f);//groundAngle
+			Write<float>(this->playerMovement + O::PlayerWalkMovement::groundAngleNew, 0.f);//groundAngleNew
+			Write<float>(this->playerMovement + O::PlayerWalkMovement::gravityMultiplier, 0.f);//gravityMultiplier
+		}
+		else {
+			Write<float>(this->playerMovement + O::PlayerWalkMovement::gravityMultiplier, 2.5f);//gravityMultiplier
+		}
+	}
+	uint64_t playerMovement{};
+
+	//void  WalkWater(bool enable) Shit
+	//{
+	//	if (Misc::WalkOnWater == true)
+	//	{
+	//		if (!this_ptr)return;
+	//		DWORD64 Movement = read(this_ptr + O::BasePlayer::movement, DWORD64);
+	//		if (!Movement)return;
+
+	//		static bool x130 = read(Movement + O::PlayerModel::grounded, bool);
+	//		static float xB8 = read(Movement + O::PlayerWalkMovement::groundAngleNew, float);
+	//		static float x74 = read(Movement + O::PlayerWalkMovement::gravityMultiplier, float);
+	//		static float x78 = read(Movement + O::PlayerWalkMovement::gravityMultiplierSwimming, float);
+
+	//		DWORD64 model = read(this_ptr + O::BasePlayer::playerModel, DWORD64);
+	//		int onLoader = read(model + 0x2C, int);
+	//		//std::cout << onLoader << std::endl;
+
+
+	//		if (BasePlayer::GetBonePosition(l_foot).y <= 1.0f && enable)
+	//			//if (GetAsyncKeyState(0x10) && enable)
+	//		{
+
+	//			write(Movement + O::PlayerModel::grounded, true, bool);
+	//			write(Movement + O::PlayerWalkMovement::groundAngleNew, 0.f, float);
+	//			write(Movement + O::PlayerWalkMovement::gravityMultiplier, 0.f, float);
+	//			write(Movement + O::PlayerWalkMovement::gravityMultiplierSwimming, 0.f, float);
+	//		}
+	//		else
+	//		{
+
+	//			write(Movement + O::PlayerModel::grounded, x130, bool);
+	//			write(Movement + O::PlayerWalkMovement::groundAngleNew, xB8, float);
+	//			write(Movement + O::PlayerWalkMovement::gravityMultiplier, x74, float);
+	//			write(Movement + O::PlayerWalkMovement::gravityMultiplierSwimming, x78, float);
+	//		}
+	//	}
+	//}
 	void Zoom()
 	{
 
@@ -1246,7 +1300,17 @@ public:
 		return BoneValue;
 	}
 
+	private:
+		//DWORD64 this_ptr;
+
+		//Vector3 BasePlayer::GetBonePosition(BoneList BoneID)
+		//{
+		//	if (!this_ptr)return { 0.f,0.f, 0.f };
+		//	return GetPosition(GetTransform(BoneID));
+		//}
+
 };
+//extern BasePlayer myPlayer;
 class Projectile {
 public:
 	Vector3 currentPosition() { return read(this + O::Projectile::currentPosition, Vector3); }

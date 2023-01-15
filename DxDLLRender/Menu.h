@@ -454,6 +454,7 @@ void AimTab()
 		ImGui::Checkbox((english ? "Only Head" : u8"Только Голова"), &AimBot::AlwaysHeadshot);
 		ImGui::Checkbox((english ? "PSilent" : u8"Псало"), &AimBot::pSilent);
 		//ImGui::Checkbox((english ? "Silent" : u8"Cало"), &AimBot::silentAim);
+		ImGui::Checkbox("Ignor NPS", &AimBot::IgnoreNpc);
 		ImGui::Checkbox((english ? "ThickBullet" : u8"Жирная Пуля"), &Weapons::FatBullet);
 		ImGui::Checkbox((english ? "Anti-Aiming" : u8"Крутилка"), &AntiAim::anti_aim);
 		if (AntiAim::anti_aim) {
@@ -745,10 +746,11 @@ void MiscTab()
 		Hotkey(english ? "LongNeck Key" : u8"Длинная шея", &Misc::longKey, ImVec2(150, 15));
 		ImGui::Checkbox(("Trace Bullet"), &Weapons::bullet_trace);
 		ImGui::Checkbox(("Fast loot"), &Misc::FastLoot);
-		ImGui::Checkbox(xorstr("Rayleigh Changer"), &Misc::rayleigh_changer);
-		if (Misc::rayleigh_changer) {
-			ImGui::SliderFloat(xorstr("Rayleigh Amount"), &Misc::rayleigh, 1.f, 50.f);
-		}
+		Hotkey("Walk On Water", &Keys::walkonWaterKey, ImVec2(150, 25));
+		//ImGui::Checkbox(xorstr("Rayleigh Changer"), &Misc::rayleigh_changer);
+		//if (Misc::rayleigh_changer) {
+		//	ImGui::SliderFloat(xorstr("Rayleigh Amount"), &Misc::rayleigh, 1.f, 50.f);
+		//}
 		ImGui::Checkbox(("Custom-Time"), &Misc::CustomTime);
 		if (Misc::CustomTime) {
 			ImGui::SliderFloat(("Time-value"), &Misc::Time, 0.f, 12.f);

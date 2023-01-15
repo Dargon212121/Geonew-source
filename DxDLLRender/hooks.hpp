@@ -243,7 +243,7 @@ void HitSound(BaseCombatEntity* entity, HitInfo* Info) {
 	if(entity->IsPlayer()){
 		if (Hit::HitSound) {
 			if (Hit::CustomHitSound) {
-				PlaySoundA("C:\\Geonew.cc\\sound.wav", NULL, SND_ASYNC | SND_FILENAME);
+				PlaySoundA("C:\\geonew\\sound.wav", NULL, SND_ASYNC | SND_FILENAME);
 			}
 		}
 	}

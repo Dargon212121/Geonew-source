@@ -38,7 +38,7 @@ namespace Keys
 	int speedKey{ 0x04 };
 	int aimKey{ 0x07 }; // VK_RMOUSE
 	int gravityKey{ 0x04 };
-	int walkonWaterKey{ 0x06 };
+	int walkonWaterKey{ 0x58 }; //x
 	int zoomKey{ 0x42 };
 	int manipulatorkey{ 0x42 };
 }
