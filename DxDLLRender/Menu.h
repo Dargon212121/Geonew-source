@@ -178,14 +178,7 @@ void EspPreview()
 	{
 		auto cur_window = ImGui::GetCurrentWindow();
 		ImVec2 w_pos = cur_window->Pos;
-		//if (PlayerEsp::skeleton)
-		//{
-		//	cur_window->DrawList->AddRect(ImVec2(w_pos.x + 40, w_pos.y + 60), ImVec2(w_pos.x + 200, w_pos.y + 360), ImColor(ColorsNShit::SkeletonColor));
-		//}
-		//if (Misc::chams)
-		//{
-		//	cur_window->DrawList->AddRect(ImVec2(w_pos.x + 40, w_pos.y + 60), ImVec2(w_pos.x + 200, w_pos.y + 360), ImColor(ColorsNShit::ChamsESP));
-		//}
+
 		if (PlayerEsp::healthbar1)
 		{
 			cur_window->DrawList->AddRectFilled(ImVec2(w_pos.x + 34, w_pos.y + 60), ImVec2(w_pos.x + 37, w_pos.y + 360), ImColor(ColorsNShit::HpBar));

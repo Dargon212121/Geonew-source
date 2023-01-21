@@ -1,5 +1,5 @@
-#include "../include/discord_rpc.h"
-#include "../include/discord_register.h"
+#include "../Includes/discord_rpc.h"
+#include "../Includes/discord_register.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMCX

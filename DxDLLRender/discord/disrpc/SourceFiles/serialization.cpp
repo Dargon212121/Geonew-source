@@ -1,6 +1,6 @@
 #include "serialization.h"
 #include "connection.h"
-#include "../include/discord_rpc.h"
+#include "../Includes/discord_rpc.h"
 
 template <typename T>
 void NumberToString(char* dest, T number)

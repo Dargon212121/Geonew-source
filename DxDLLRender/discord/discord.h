@@ -1,9 +1,10 @@
 #pragma once
-#include "disrpc/include/discord_register.h" //sdk
-#include "disrpc/include/discord_rpc.h" // sdk
-#include <Windows.h> //windows general header
+#include "disrpc/Includes/discord_register.h"
+#include "disrpc/Includes/discord_rpc.h"
+#include <Windows.h>
 
 class Discord {
 public:
-	void Initialize();
+    void Initialize();
+    void Update();
 };

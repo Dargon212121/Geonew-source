@@ -1,7 +1,7 @@
-#include "../include/discord_rpc.h"
+#include "../Includes/discord_rpc.h"
 
 #include "backoff.h"
-#include "../include/discord_register.h"
+#include "../Includes/discord_register.h"
 #include "msg_queue.h"
 #include "rpc_connection.h"
 #include "serialization.h"

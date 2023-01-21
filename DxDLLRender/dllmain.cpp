@@ -1,6 +1,18 @@
 ﻿#include "includes.h"
 #include "internet.h"
 
+#pragma comment(lib, "ntdll.lib")
+
+#include "discord/discord.h"
+
+Discord* g_Discord;
+
+__forceinline void discord_main()
+{
+	g_Discord->Initialize();
+	g_Discord->Update();
+}
+
 
 
 char dlldir[320];
@@ -29,28 +41,50 @@ void injection(HINSTANCE hModule) {
 
 }
 
-BOOL __stdcall DllMain(HINSTANCE hModule, DWORD dwReason, LPVOID lpReserved) {
-	switch (dwReason)
-	{
-	case DLL_PROCESS_ATTACH: // A process is loading the DLL.
-		DisableThreadLibraryCalls(hModule);
-		injection(hModule);
-		GetModuleFileName(hModule, (LPWSTR)dlldir, 512);
-		for (size_t i = strlen(dlldir); i > 0; i--) { if (dlldir[i] == '\\') { dlldir[i + 1] = 0; break; } }
-		CreateThread(NULL, 0, Start, NULL, 0, NULL);
-		il2cpp::init();
-		init_bp();
-		unity::init_unity();
-		//ClientInputXD = GetModBase((L"GameAssembly.dll")) + 0x3045D0;
-		//DetourAttach(&(LPVOID&)ClientInputXD, &ClientInput);
-
-		break;
-	case DLL_PROCESS_DETACH: // A process unloads the DLL.
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(LPVOID&)phookD3D11Present, (PBYTE)hookD3D11Present);
-		DetourTransactionCommit();
-		break;
-	}
-	return TRUE;
+void RUST_OnLoad(HINSTANCE hModule) {
+	DisableThreadLibraryCalls(hModule);
+	injection(hModule);
+	GetModuleFileName(hModule, (LPWSTR)dlldir, 512);
+	for (size_t i = strlen(dlldir); i > 0; i--) { if (dlldir[i] == '\\') { dlldir[i + 1] = 0; break; } }
+	CreateThread(NULL, 0, Start, NULL, 0, NULL);
+	il2cpp::init();
+	init_bp();
+	unity::init_unity();
 }
+
+bool DllMain(HMODULE hMod, std::uint32_t call_reason, void*) {
+	if (call_reason != DLL_PROCESS_ATTACH)
+		return false;
+	const auto handle = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(RUST_OnLoad), hMod, 0, nullptr);
+	if (handle != NULL)
+		CloseHandle(handle);
+
+	return true;
+}
+
+//BOOL __stdcall DllMain(HINSTANCE hModule, DWORD dwReason, LPVOID lpReserved) {
+//	switch (dwReason)
+//	{
+//	case DLL_PROCESS_ATTACH: // A process is loading the DLL.
+//		DisableThreadLibraryCalls(hModule);
+//		injection(hModule);
+//		GetModuleFileName(hModule, (LPWSTR)dlldir, 512);
+//		for (size_t i = strlen(dlldir); i > 0; i--) { if (dlldir[i] == '\\') { dlldir[i + 1] = 0; break; } }
+//		CreateThread(NULL, 0, Start, NULL, 0, NULL);
+//		il2cpp::init();
+//		init_bp();
+//		unity::init_unity();
+//		//ClientInputXD = GetModBase((L"GameAssembly.dll")) + 0x3045D0;
+//		//DetourAttach(&(LPVOID&)ClientInputXD, &ClientInput);
+//
+//		break;
+//	//case DLL_PROCESS_DETACH: // A process unloads the DLL.
+//	//	DetourTransactionBegin();
+//	//	DetourUpdateThread(GetCurrentThread());
+//	//	DetourDetach(&(LPVOID&)phookD3D11Present, (PBYTE)hookD3D11Present);
+//	//	DetourTransactionCommit();
+//	//	break;
+//	}
+//	discord_main(hModule);
+//	return TRUE;
+//}
