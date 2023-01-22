@@ -119,6 +119,7 @@ namespace Weapons
 	bool Automatic = false;
 	bool FatBullet = false;
 	bool NoSway = false;
+	bool NoSpread = false;
 	bool RapidFire = false;
 	bool SuperBow = false;
 	bool SuperEoka = false;
@@ -377,6 +378,7 @@ namespace Hit
 }
 namespace Misc
 {
+	bool NightMode = false;
 	bool discordstatus = false;
 	bool Watermark = false;
 	bool OnlyVisible = false;

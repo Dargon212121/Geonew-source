@@ -1036,6 +1036,7 @@ public:
 	//		}
 	//	}
 	//}
+
 	void Zoom()
 	{
 
@@ -1235,7 +1236,7 @@ public:
 
 		int Flags = read(this + O::BasePlayer::playerFlags, int);
 		write(this + O::BasePlayer::playerFlags, (Flags |= 4), int);
-
+		return;
 	}
 	void SpiderMan() {
 		DWORD64 Movement = read(this + O::BasePlayer::movement, DWORD64);
@@ -1245,6 +1246,29 @@ public:
 	void NoSway() {
 		write(this + O::BasePlayer::clothingAccuracyBonus, 1.f, float);
 	}
+
+	void NoSpread()
+	{
+			DWORD64 Held = read((const uintptr_t)this + 0xA0, DWORD64);// private EntityRef heldEntity ..private EntityRef heldEntity; // 0x98 //private EntityRef heldEntity
+			write(Held + 0x348, 0.f, float);// private float stancePenalty;
+			write(Held + 0x34C, 0.f, float);// private float aimconePenalty;
+			write(Held + 0x2F0, 0.f, float);// public float aimCone;	
+			write(Held + 0x2F4, 0.f, float);// public float hipAimCone;
+			write(Held + 0x2F8, 0.f, float);// public float aimconePenaltyPerShot;
+	}
+
+	void NoRecoil()
+	{
+			DWORD64 Held = read((const uintptr_t)this + 0xA0, DWORD64);// private EntityRef heldEntity
+			DWORD64 recoil = read(Held + 0x2E0, DWORD64); // public RecoilProperties recoil;
+			write(recoil + 0x18, 0.f, float);// public float recoilYawMin;
+			write(recoil + 0x1C, 0.f, float);// public float recoilYawMax;
+			write(recoil + 0x20, 0.f, float);// public float recoilPitchMin;
+			write(recoil + 0x24, 0.f, float);// public float recoilPitchMax;
+			//safe_write(recoil + 0x30, 0.f, float); //public float ADSScale; 
+			//safe_write(recoil + 0x34, 0.f, float); //public float movementPenalty; 		
+	}
+
 	void NoBlockAiming() {
 		write(this + O::BasePlayer::clothingAccuracyBonus, false, bool);
 	}
@@ -1265,8 +1289,7 @@ public:
 		write(pizda + 0x0, Misc::Time, float);
 	}
 	void NightMode() {
-		if (Visuals::NightMode)
-		{
+
 			static DWORD64 dwGameObjectManager = 0;
 			UINT64 ObjMgr = read(GetModBase(StrW((L"UnityPlayer.dll"))) + 0x17C1F18, UINT64);
 			UINT64 end = read(ObjMgr, UINT64);
@@ -1278,8 +1301,6 @@ public:
 			DWORD64 TodCycle2 = read(Dome + 0x38, DWORD64);
 			write(TodCycle2 + 0x10, 01.00f, float);
 			return;
-		}
-		return;
 	}
 	void SetGravity(float val) {
 		DWORD64 Movement = read(this + O::BasePlayer::movement, DWORD64);
@@ -1287,18 +1308,90 @@ public:
 	}
 
 	typedef Vector3(__stdcall* Transform)(UINT64);
-	Vector3 GetPosition(ULONG_PTR pTransform) {
-		if (!pTransform) return Vector3();
-		Transform original = (Transform)(Storage::gBase + O::UnityEngine_Transform::get_position);
-		Vector3 res = original(pTransform);
-		return res;
+	//Vector3 GetPosition(ULONG_PTR pTransform) {
+	//	if (!pTransform) return Vector3();
+	//	Transform original = (Transform)(Storage::gBase + O::UnityEngine_Transform::get_position);
+	//	Vector3 res = original(pTransform);
+	//	return res;
+	//}
+
+	Vector3 GetPosition(ULONG_PTR pTransform)
+	{
+		if (!pTransform) return Vector3{ 0.f, 0.f, 0.f };
+
+		struct Matrix34 { BYTE vec0[16]; BYTE vec1[16]; BYTE vec2[16]; };
+		const __m128 mulVec0 = { -2.000, 2.000, -2.000, 0.000 };
+		const __m128 mulVec1 = { 2.000, -2.000, -2.000, 0.000 };
+		const __m128 mulVec2 = { -2.000, -2.000, 2.000, 0.000 };
+
+		int Index = *(PINT)(pTransform + 0x40);
+		DWORD64 pTransformData = read(pTransform + 0x38, DWORD64);
+		DWORD64 transformData[2];
+		memcpy(&transformData, (PVOID)(pTransformData + 0x18), 16);
+
+		size_t sizeMatriciesBuf = 48 * Index + 48;
+		size_t sizeIndicesBuf = 4 * Index + 4;
+
+		int pIndicesBuf[100];
+		Matrix34 pMatriciesBuf[1000];
+
+		memcpy(pMatriciesBuf, (PVOID)transformData[0], sizeMatriciesBuf);
+		memcpy(pIndicesBuf, (PVOID)transformData[1], sizeIndicesBuf);
+
+		__m128 result = *(__m128*)((ULONGLONG)pMatriciesBuf + 0x30 * Index);
+		int transformIndex = *(int*)((ULONGLONG)pIndicesBuf + 0x4 * Index);
+
+		while (transformIndex >= 0)
+		{
+			Matrix34 matrix34 = *(Matrix34*)((ULONGLONG)pMatriciesBuf + 0x30 * transformIndex);
+			__m128 xxxx = _mm_castsi128_ps(_mm_shuffle_epi32(*(__m128i*)(&matrix34.vec1), 0x00));
+			__m128 yyyy = _mm_castsi128_ps(_mm_shuffle_epi32(*(__m128i*)(&matrix34.vec1), 0x55));
+			__m128 zwxy = _mm_castsi128_ps(_mm_shuffle_epi32(*(__m128i*)(&matrix34.vec1), 0x8E));
+			__m128 wzyw = _mm_castsi128_ps(_mm_shuffle_epi32(*(__m128i*)(&matrix34.vec1), 0xDB));
+			__m128 zzzz = _mm_castsi128_ps(_mm_shuffle_epi32(*(__m128i*)(&matrix34.vec1), 0xAA));
+			__m128 yxwy = _mm_castsi128_ps(_mm_shuffle_epi32(*(__m128i*)(&matrix34.vec1), 0x71));
+			__m128 tmp7 = _mm_mul_ps(*(__m128*)(&matrix34.vec2), result);
+
+			result = _mm_add_ps(
+				_mm_add_ps(
+					_mm_add_ps(
+						_mm_mul_ps(
+							_mm_sub_ps(
+								_mm_mul_ps(_mm_mul_ps(xxxx, mulVec1), zwxy),
+								_mm_mul_ps(_mm_mul_ps(yyyy, mulVec2), wzyw)),
+							_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(tmp7), 0xAA))),
+						_mm_mul_ps(
+							_mm_sub_ps(
+								_mm_mul_ps(_mm_mul_ps(zzzz, mulVec2), wzyw),
+								_mm_mul_ps(_mm_mul_ps(xxxx, mulVec0), yxwy)),
+							_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(tmp7), 0x55)))),
+					_mm_add_ps(
+						_mm_mul_ps(
+							_mm_sub_ps(
+								_mm_mul_ps(_mm_mul_ps(yyyy, mulVec0), yxwy),
+								_mm_mul_ps(_mm_mul_ps(zzzz, mulVec1), zwxy)),
+							_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(tmp7), 0x00))),
+						tmp7)), *(__m128*)(&matrix34.vec0));
+
+			transformIndex = *(int*)((ULONGLONG)pIndicesBuf + 0x4 * transformIndex);
+		}
+
+		return Vector3(result.m128_f32[0], result.m128_f32[1], result.m128_f32[2]);
 	}
-	DWORD64 GetTransform(int bone) {
-		DWORD64 player_model = read(this + O::BaseEntity::model, DWORD64);// public Model model;_public class BaseEntity : BaseNetworkable, IProvider, ILerpTarget, IPrefabPreProcess // TypeDefIndex: 8714
+
+	DWORD64 GetTransform(int bone)
+	{
+		DWORD64 player_model = read(this + 0x130, DWORD64);// public Model model;_public class BaseEntity : BaseNetworkable, IProvider, ILerpTarget, IPrefabPreProcess // TypeDefIndex: 8714
 		DWORD64 boneTransforms = read(player_model + 0x48, DWORD64);//public Transform[] boneTransforms;
 		DWORD64 BoneValue = read((boneTransforms + (0x20 + (bone * 0x8))), DWORD64);
-		return BoneValue;
+		return read(BoneValue + 0x10, DWORD64);
 	}
+	//DWORD64 GetTransform(int bone) {
+	//	DWORD64 player_model = read(this + O::BaseEntity::model, DWORD64);// public Model model;_public class BaseEntity : BaseNetworkable, IProvider, ILerpTarget, IPrefabPreProcess // TypeDefIndex: 8714
+	//	DWORD64 boneTransforms = read(player_model + 0x48, DWORD64);//public Transform[] boneTransforms;
+	//	DWORD64 BoneValue = read((boneTransforms + (0x20 + (bone * 0x8))), DWORD64);
+	//	return BoneValue;
+	//}
 
 	private:
 		//DWORD64 this_ptr;

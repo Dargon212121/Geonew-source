@@ -230,15 +230,6 @@ inline bool __fastcall CanAttack(void* a1, void* a2) {
 //	return original_consolerun(options, strCommand, args);
 //}
 
-void FakeAdmin()
-{
-	if (Misc::FakeAdmin)
-	{
-		int Flags = read((const uintptr_t) + O::BasePlayer::playerFlags, int);
-		write((const uintptr_t) + O::BasePlayer::playerFlags, (Flags |= 4), int);
-	}
-}
-
 void HitSound(BaseCombatEntity* entity, HitInfo* Info) {
 	if(entity->IsPlayer()){
 		if (Hit::HitSound) {

@@ -33,7 +33,10 @@ void MiscFuncs() {
 	LocalPlayer.BasePlayer->SetFov();
 	if (Misc::SpiderMan)
 		LocalPlayer.BasePlayer->SpiderMan();
-
+	if (Misc::NightMode)
+	{
+		LocalPlayer.BasePlayer->NightMode();
+	}
 	if (Misc::CustomFov)
 		LocalPlayer.BasePlayer->SetFov();
 	if (Misc::Zoom)
@@ -47,6 +50,10 @@ void MiscFuncs() {
 		LocalPlayer.BasePlayer->Admintime();}
 	if (Weapons::NoSway)
 		LocalPlayer.BasePlayer->NoSway();
+	if (Weapons::NoSpread) {
+		LocalPlayer.BasePlayer->NoSpread();}
+	if (Weapons::NoRecoil) {
+		LocalPlayer.BasePlayer->NoRecoil();}
 	if (Misc::FakeAdmin)
 		LocalPlayer.BasePlayer->FakeAdmin();
 	if (AimBot::RCS)

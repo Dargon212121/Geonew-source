@@ -701,6 +701,8 @@ void MiscTab()
 		}
 		ImGui::Checkbox((english ? "Recoil Control System" : u8"Без отдачи"), &AimBot::RCS);
 		ImGui::Checkbox((english ? "No Sway" : u8"Без покачивания"), &Weapons::NoSway);
+		ImGui::Checkbox("No spread", &Weapons::NoSpread);
+		ImGui::Checkbox("No recoil", &Weapons::NoRecoil);
 		ImGui::Checkbox((english ? "Automatic Fire" : u8"Авто зажим"), &Weapons::Automatic);
 		ImGui::Checkbox((english ? "Rapid Fire" : u8"Быстрая стрельба"), &Misc::RapidFire);
 		ImGui::Checkbox((english ? "Instant Eoka" : u8"Быстрая еока"), &Weapons::SuperEoka);
@@ -748,6 +750,7 @@ void MiscTab()
 		if (Misc::CustomTime) {
 			ImGui::SliderFloat(("Time-value"), &Misc::Time, 0.f, 12.f);
 		}
+		ImGui::Checkbox("Night Mode", &Misc::NightMode);
 		HelpCheckbox(("Fake-Admin"), &Misc::FakeAdmin, "My be crash, But i bypassed it))) ");
 		ImGui::Checkbox((english ? "Jump-Aiming" : u8"Аим в прыжке"), &Weapons::jumpAim);
 		ImGui::Checkbox(("Omni-Sprint"), &Misc::omniSprint);
