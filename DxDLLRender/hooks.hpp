@@ -166,24 +166,24 @@ bool __fastcall LineOfSight(Vector3 p1, Vector3 p2, int i, float f = 0.f, void* 
 		return false;
 	}
 }
-void __fastcall NightMode(void* a1, void* a2)
-{
-	if (Visuals::NightMode)
-	{
-		typedef void(__stdcall* F)(float);
-		typedef void(__stdcall* I)(int);
-		typedef void(__stdcall* C)(D2D1::ColorF);
-		((I)(GetModBase(StrW(L"GameAssembly.dll")) + 0x1C245E0))(3);//public static void set_ambientMode(AmbientMode value) { }
-		((F)(GetModBase(StrW(L"GameAssembly.dll")) + 0x1C24520))(1.f); // public static void set_ambientIntensity(float value) { }
-		((C)(GetModBase(StrW(L"GameAssembly.dll")) + 0x1C245A0))(FLOAT4TOD3DCOLOR(ColorsNShit::Ambient));//public static void set_ambientLight(Color value) { }
-
-	}
-	return  original_mode(a1, a2);
-}
+//void __fastcall NightMode(void* a1, void* a2)
+//{
+//	if (Visuals::NightMode)
+//	{
+//		typedef void(__stdcall* F)(float);
+//		typedef void(__stdcall* I)(int);
+//		typedef void(__stdcall* C)(D2D1::ColorF);
+//		((I)(GetModBase(StrW(L"GameAssembly.dll")) + 0x1C245E0))(3);//public static void set_ambientMode(AmbientMode value) { }
+//		((F)(GetModBase(StrW(L"GameAssembly.dll")) + 0x1C24520))(1.f); // public static void set_ambientIntensity(float value) { }
+//		((C)(GetModBase(StrW(L"GameAssembly.dll")) + 0x1C245A0))(FLOAT4TOD3DCOLOR(ColorsNShit::Ambient));//public static void set_ambientLight(Color value) { }
+//
+//	}
+//	return  original_mode(a1, a2);
+//}
 bool __fastcall SendClientTick(BasePlayer* baseplayer) {
 	if (!baseplayer) return original_sendclienttick(baseplayer);
 	if (AntiAim::anti_aim) {
-		auto input = read(baseplayer + O::BasePlayer::input, uintptr_t);
+		auto input = read(baseplayer + 0x608, uintptr_t); // public PlayerInput input;
 		auto state = read(input + 0x20, uintptr_t);
 		auto current = read(state + 0x10, uintptr_t); if (!current) { return original_sendclienttick(baseplayer); }
 		yeet += AntiAim::anti_aim_speed;
@@ -231,7 +231,7 @@ inline bool __fastcall CanAttack(void* a1, void* a2) {
 //}
 
 void HitSound(BaseCombatEntity* entity, HitInfo* Info) {
-	if(entity->IsPlayer()){
+	if (entity->IsPlayer()) {
 		if (Hit::HitSound) {
 			if (Hit::CustomHitSound) {
 				PlaySoundA("C:\\geonew\\sound.wav", NULL, SND_ASYNC | SND_FILENAME);
@@ -288,12 +288,12 @@ void DoMeleeAttack(AimResult target, DWORD64 active, bool transform = true) {
 	Vector3 lp = LocalPlayer.BasePlayer->GetPosition();
 	typedef float(__stdcall* A)();
 
-	float time = ((A)(Storage::gBase + O::UnityEngine_Time::get_time))();
-	if (read(active + O::AttackEntity::nextAttackTime, float) >= time) { //nextattacktime
+	float time = ((A)(Storage::gBase + 0x289A6B0))(); // public static float get_time() { }
+	if (read(active + 0x250, float) >= time) { // private float nextAttackTime;			Class: AttackEntity
 		return;
 	}
 
-	if (read(active + O::AttackEntity::timeSinceDeploy, float) < read(active + O::AttackEntity::deployDelay, float)) {
+	if (read(active + 0x25C, float) < read(active + 0x1F8, float)) { // 0x25C - private float timeSinceDeploy;  0x1F8 - public float deployDelay;
 		return;
 	}
 
@@ -305,41 +305,46 @@ void DoMeleeAttack(AimResult target, DWORD64 active, bool transform = true) {
 	auto HitTest = ((NNew)il2cpp::methods::object_new(hit_test_class));
 
 	Ray ray = Ray(lp, (target.pos - lp).Normalized());
-	write(HitTest + O::HitTest::MaxDistance, 1000.f, float); //MaxDistance
+	write(HitTest + 0x34, 1000.f, float); //public float MaxDistance; 
 	DWORD64 trans;
 	if (transform) {
 		trans = target.entity->GetTransform(BoneList::head);
 	}
 	else {
 		typedef DWORD64(__stdcall* GetTr)(DWORD64);
-		trans = ((GetTr)(Storage::gBase + O::UnityEngine_Component::get_transform))((DWORD64)target.entity);
+		trans = ((GetTr)(Storage::gBase + 0x2871180))((DWORD64)target.entity); // UnityEngine.Component.get_transform
 	}
 	if (!trans) return;
 
-	write(HitTest + O::HitTest::HitTransform, trans, DWORD64); //HitTransform
-	write(HitTest + O::HitTest::AttackRay, ray, Ray);
+	//----------START Class HitTest O::HitTest
+
+	write(HitTest + 0xB0, trans, DWORD64); //public Transform HitTransform;
+	write(HitTest + 0x14, ray, Ray); // public Ray AttackRay;
 	//write(HitTest + 0xC0, Str(xorstr(L"Flesh")), Str); //HitMaterial
-	write(HitTest + O::HitTest::DidHit, true, bool); //DidHit
-	write(HitTest + O::HitTest::HitEntity, target.entity, BasePlayer*); //HitEntity
+	write(HitTest + 0x66, true, bool); //public bool DidHit;
+	write(HitTest + 0x88, target.entity, BasePlayer*); //HitEntity
 	typedef Vector3(__stdcall* ITP)(DWORD64, Vector3);
-	Vector3 hitpoint = ((ITP)(Storage::gBase + O::UnityEngine_Transform::InverseTransformPoint))(trans, target.pos);
-	write(HitTest + O::HitTest::HitPoint, hitpoint, Vector3); //HitPoint
-	write(HitTest + O::HitTest::HitNormal, Vector3(0, 0, 0), Vector3); //HitNormal
-	write(HitTest + O::HitTest::damageProperties, read(active + O::BaseMelee::damageProperties, DWORD64), DWORD64);
+	Vector3 hitpoint = ((ITP)(Storage::gBase + 0x75DBD0))(trans, target.pos); // public Vector3 InverseTransformPoint(Vector3 pt)
+	write(HitTest + 0x90, hitpoint, Vector3); //public Vector3 HitPoint;
+	write(HitTest + 0x9C, Vector3(0, 0, 0), Vector3); //public Vector3 HitNormal;
+	write(HitTest + 0x68, read(active + 0x280, DWORD64), DWORD64); //0x68 -- public DamageProperties damageProperties;			BaseMelee::damageProperties - public DamageProperties damageProperties;
 	typedef void(__stdcall* Atk)(DWORD64, DWORD64);
-	float kd = read(active + O::AttackEntity::repeatDelay, float);
+	float kd = read(active + 0x1FC, float); // O::AttackEntity::repeatDelay -- public float repeatDelay;
 	typedef void(__stdcall* StartKD)(DWORD64, float);
-	((StartKD)(Storage::gBase + O::AttackEntity::StartAttackCooldown))(active, kd);
-	return ((Atk)(Storage::gBase + O::BaseMelee::ProcessAttack))(active, (DWORD64)HitTest);
+
+	//----------START Class HitTest
+
+	((StartKD)(Storage::gBase + 0x7846A0))(active, kd); // protected void StartAttackCooldown(float cooldown)
+	return ((Atk)(Storage::gBase + 0x5A0D80))(active, (DWORD64)HitTest);// protected virtual void ProcessAttack(HitTest hit)
 }
 bool PLOS(Vector3 a, Vector3 b) {
 	typedef bool(__stdcall* LOS)(Vector3, Vector3, int, float);
-	return ((LOS)(Storage::gBase + O::GamePhysics::LineOfSight))(a, b, 2162688, 0.f);
+	return ((LOS)(Storage::gBase + 0x733A20))(a, b, 2162688, 0.f);// public static bool LineOfSight(Vector3 p0, Vector3 p1, int layerMask, float padding, BaseEntity ignoreEntity) { }
 }
 float MaxMeleeDist(DWORD64 melee, bool hren) {
 	float pad = 0.1f;
 	typedef float(__stdcall* RetF)();
-	float time = ((RetF)(Storage::gBase + O::UnityEngine_Time::get_time))();
+	float time = ((RetF)(Storage::gBase + 0x289A6B0))(); // public static float get_time() { }
 
 	float desyncTime = max(time - LocalPlayer.BasePlayer->GetTickTime() - 0.0325f, 0.f);
 	float res = pad + desyncTime * 5.5f;
@@ -358,8 +363,8 @@ AimResult TargetMeleeTest(BasePlayer* Player, DWORD64 melee, DWORD64 IgnoreTeam1
 
 	typedef Vector3(__stdcall* CPoint)(BasePlayer*, Vector3);
 	Vector3 prepos = Player->GetPosition();
-	Vector3 closest_entity = ((CPoint)(Storage::gBase + O::BaseEntity::ClosestPoint))(LocalPlayer.BasePlayer, prepos);
-	Vector3 closest_local = ((CPoint)(Storage::gBase + O::BaseEntity::ClosestPoint))(Player, closest_entity);
+	Vector3 closest_entity = ((CPoint)(Storage::gBase + 0x577EB0))(LocalPlayer.BasePlayer, prepos);// public Vector3 ClosestPoint(Vector3 position)
+	Vector3 closest_local = ((CPoint)(Storage::gBase + 0x577EB0))(Player, closest_entity);
 
 	float disttoentity = MaxMeleeDist(melee, false);
 	float distfromlocal = MaxMeleeDist(melee, true);
@@ -402,12 +407,12 @@ void __fastcall FastLoot(uintptr_t sourceContainer, DWORD64 action)
 bool waslagging = false;
 void PickupItem(DWORD64 item) {
 	typedef void(__stdcall* Pick)(DWORD64, Str);
-	return ((Pick)(Storage::gBase + O::BaseEntity::ServerRPC))(item, Str(L"Pickup"));
+	return ((Pick)(Storage::gBase + 0x582220))(item, Str(L"Pickup")); // public void ServerRPC(SendMethod sendMethod, string funcName)
 }
 float LastUpdate = 0.f;
 void update_chams() {
 	if (LocalPlayer.BasePlayer->GetTickTime() > LastUpdate + Misc::uptime) {
-		reinterpret_cast<void(*)()>(Storage::gBase + O::PlayerModel::RebuildAll)();
+		reinterpret_cast<void(*)()>(Storage::gBase + 0x7F5770)(); // public static void RebuildAll()
 		LastUpdate = LocalPlayer.BasePlayer->GetTickTime();
 	}
 }
@@ -428,7 +433,7 @@ auto chams1(BasePlayer* player, bool draw = true) -> void
 	}
 	if (draw) {
 		if (Misc::chams) {
-			const auto multiMesh = *reinterpret_cast<std::uintptr_t*>(player->get_player_model() + O::PlayerModel::_multiMesh);
+			const auto multiMesh = *reinterpret_cast<std::uintptr_t*>(player->get_player_model() + 0x270);// private SkinnedMultiMesh _multiMesh;
 
 			if (!multiMesh)
 				return;
@@ -494,7 +499,7 @@ auto chams(BasePlayer* player, bool draw = true) -> void
 	}
 	if (draw) {
 		if (Misc::chams1) {
-			const auto multiMesh = *reinterpret_cast<std::uintptr_t*>(player->get_player_model() + O::PlayerModel::_multiMesh);
+			const auto multiMesh = *reinterpret_cast<std::uintptr_t*>(player->get_player_model() + 0x270);//private SkinnedMultiMesh _multiMesh;
 
 			if (!multiMesh)
 				return;
@@ -548,11 +553,11 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 	float CurFOV;
 	bool LP_isValid = false;
 	if (!waslagging && Misc::FakeLag) {
-		write(LocalPlayer.BasePlayer + O::BasePlayer::clientTickInterval, 0.4f, float);
+		write(LocalPlayer.BasePlayer + 0x7E8, 0.4f, float);// public float clientTickInterval;
 		waslagging = true;
 	}
 	else if (waslagging && !Misc::FakeLag) {
-		write(LocalPlayer.BasePlayer + O::BasePlayer::clientTickInterval, 0.05f, float);
+		write(LocalPlayer.BasePlayer + 0x7E8, 0.05f, float);// public float clientTickInterval;
 		waslagging = false;
 	}
 	//if (Misc::rayleigh_changer) {
@@ -562,17 +567,17 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 	//	reinterpret_cast<void(__fastcall*)(float)>(Storage::gBase + 0x392BB0)(0.f);
 	//}
 	if (Misc::mass_suicide) {
-		reinterpret_cast<void(_fastcall*)(BasePlayer*, float)>(Storage::gBase + O::BasePlayer::OnLand)(LocalPlayer.BasePlayer, -50);
+		reinterpret_cast<void(_fastcall*)(BasePlayer*, float)>(Storage::gBase + 0x7D2D50)(LocalPlayer.BasePlayer, -50);// public void OnLand(float fVelocity)
 	}
 	if (Misc::suicide && GetAsyncKeyState(Keys::suicide) && LocalPlayer.BasePlayer->GetHealth() > 0 && !LocalPlayer.BasePlayer->IsMenu()) {
-		reinterpret_cast<void(_fastcall*)(BasePlayer*, float)>(Storage::gBase + O::BasePlayer::OnLand)(LocalPlayer.BasePlayer, -50);
+		reinterpret_cast<void(_fastcall*)(BasePlayer*, float)>(Storage::gBase + 0x7D2D50)(LocalPlayer.BasePlayer, -50);// public void OnLand(float fVelocity)
 	}
 	WeaponData* Weapon = LocalPlayer.BasePlayer->GetActiveWeapon();
 	DWORD64 active = Weapon->Held();
 	char* classname = Weapon->ClassName();
 	if (active && Misc::weapon_spam) {
 		if (GetAsyncKeyState(Keys::weaponspam) && !LocalPlayer.BasePlayer->IsMenu()) {
-			reinterpret_cast<void(*)(uintptr_t, Signal, Str)>(Storage::gBase + O::BaseEntity::SendSignalBroadcast)(active, Signal::Attack, Str(xorstr(L"")));
+			reinterpret_cast<void(*)(uintptr_t, Signal, Str)>(Storage::gBase + 0x582060)(active, Signal::Attack, Str(xorstr(L""))); // 	public void SendSignalBroadcast(BaseEntity.Signal signal, string arg = "") { }
 		}
 	}
 
@@ -582,7 +587,7 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 	if (true) {
 
 		DWORD64 BaseNetworkable;
-		BaseNetworkable = read(Storage::gBase + 0x36567B8, DWORD64); //BN 
+		BaseNetworkable = read(Storage::gBase + 0x3352368, DWORD64); //BN 
 		DWORD64 EntityRealm = read(BaseNetworkable + 0xB8, DWORD64);
 		DWORD64 ClientEntities = read(EntityRealm, DWORD64);
 		DWORD64 ClientEntities_list = read(ClientEntities + 0x10, DWORD64);
@@ -616,7 +621,7 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 			{
 				BasePlayer* Player = (BasePlayer*)read(Object + 0x28, DWORD64);
 				BasePlayer* Local = (BasePlayer*)read(Object + 0x28, DWORD64);
-				if (!read(Player + O::BasePlayer::playerModel, DWORD64)) continue;
+				if (!read(Player + 0x5E8, DWORD64)) continue;// public PlayerModel playerModel;
 				update_chams();
 				chams(Player);
 				chams1(Player);
@@ -632,7 +637,7 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 	MiscFuncs();
 	if (Misc::Meleeatack) {
 		DWORD64 BaseNetworkable;
-		BaseNetworkable = read(GetModBase(StrW((L"GameAssembly.dll"))) + 0x36567B8, DWORD64);
+		BaseNetworkable = read(GetModBase(StrW((L"GameAssembly.dll"))) + 0x3352368, DWORD64);
 		DWORD64 EntityRealm = read(BaseNetworkable + 0xB8, DWORD64);
 		DWORD64 ClientEntities = read(EntityRealm, DWORD64);
 		DWORD64 ClientEntities_list = read(ClientEntities + 0x10, DWORD64);
@@ -641,7 +646,7 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 		int EntityCount = read(ClientEntities_values + 0x10, int);
 		DWORD64 EntityBuffer = read(ClientEntities_values + 0x18, DWORD64);
 		WeaponData* weapon = LocalPlayer.BasePlayer->GetActiveWeapon();
-		DWORD64 active = read(weapon + O::Item::heldEntity, DWORD64);
+		DWORD64 active = read(weapon + 0xA8, DWORD64);// private EntityRef heldEntity;
 
 		for (int i = 0; i <= EntityCount; i++)
 		{
@@ -660,7 +665,7 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 				if (Misc::Meleeatack && !LocalPlayer.BasePlayer->IsTeamMate(LocalPlayer.BasePlayer->GetSteamID()) && m_strstr(buff, ("player.prefab"))) {
 					BasePlayer* Player = (BasePlayer*)read(Object + 0x28, DWORD64);
 					BasePlayer* Local = (BasePlayer*)read(Object + 0x28, DWORD64);
-					if (!read(Player + O::BasePlayer::playerModel, DWORD64)) continue;
+					if (!read(Player + 0x5E8, DWORD64)) continue;// public PlayerModel playerModel;
 					bool IgnoreTeam11 = LocalPlayer.BasePlayer->IsTeamMate(Player->GetSteamID());
 					DWORD64 ent = read(Object + 0x28, UINT64);
 					UINT64 gameObject = read(ObjectClass + 0x30, UINT64);
@@ -678,7 +683,7 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 	if (Misc::AutoFarm) {
 
 		DWORD64 BaseNetworkable;
-		BaseNetworkable = read(GetModBase(StrW((L"GameAssembly.dll"))) + 0x36567B8, DWORD64);
+		BaseNetworkable = read(GetModBase(StrW((L"GameAssembly.dll"))) + 0x3352368, DWORD64);
 		DWORD64 EntityRealm = read(BaseNetworkable + 0xB8, DWORD64);
 		DWORD64 ClientEntities = read(EntityRealm, DWORD64);
 		DWORD64 ClientEntities_list = read(ClientEntities + 0x10, DWORD64);
@@ -687,7 +692,7 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 		int EntityCount = read(ClientEntities_values + 0x10, int);
 		DWORD64 EntityBuffer = read(ClientEntities_values + 0x18, DWORD64);
 		WeaponData* weapon = LocalPlayer.BasePlayer->GetActiveWeapon();
-		DWORD64 active = read(weapon + O::Item::heldEntity, DWORD64);
+		DWORD64 active = read(weapon + 0xA8, DWORD64);// private EntityRef heldEntity;
 		char* classname = weapon->ClassName();
 		bool weaponmelee = weapon && classname && (m_strcmp(classname, xorstr("BaseMelee")) || m_strcmp(classname, xorstr("Jackhammer")));
 		for (int i = 0; i <= EntityCount; i++)
@@ -710,7 +715,7 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 					UINT64 Vec = read(Trans + 0x38, UINT64);
 					Vector3 pos = read(Vec + 0x90, Vector3);
 					typedef Vector3(__stdcall* CPoint)(BasePlayer*, Vector3);
-					Vector3 local = ((CPoint)(Storage::gBase + O::BaseEntity::ClosestPoint))(LocalPlayer.BasePlayer, pos);
+					Vector3 local = ((CPoint)(Storage::gBase + 0x577EB0))(LocalPlayer.BasePlayer, pos);//public Vector3 ClosestPoint(Vector3 position)		Class: BaseEntity
 					if (Math::Calc3D_Dist(local, pos) >= 2.f) {
 						continue;
 					}
@@ -728,7 +733,7 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 					Vector3 pos = read(Vec + 0x90, Vector3); //TODO Hit tree marker
 					typedef Vector3(__stdcall* CPoint)(BasePlayer*, Vector3);
 
-					Vector3 local = ((CPoint)(Storage::gBase + O::BaseEntity::ClosestPoint))(LocalPlayer.BasePlayer, pos);
+					Vector3 local = ((CPoint)(Storage::gBase + 0x577EB0))(LocalPlayer.BasePlayer, pos);//public Vector3 ClosestPoint(Vector3 position)		Class: BaseEntity
 					if (Math::Calc3D_Dist(local, pos) >= 2.f) {
 						continue;
 					}
@@ -747,7 +752,7 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 					Vector3 pos = read(Vec + 0x90, Vector3); //TODO Hit tree marker
 					typedef Vector3(__stdcall* CPoint)(BasePlayer*, Vector3);
 
-					Vector3 local = ((CPoint)(Storage::gBase + O::BaseEntity::ClosestPoint))(LocalPlayer.BasePlayer, pos);
+					Vector3 local = ((CPoint)(Storage::gBase + 0x577EB0))(LocalPlayer.BasePlayer, pos);//public Vector3 ClosestPoint(Vector3 position)		Class: BaseEntity
 					if (Math::Calc3D_Dist(local, pos) >= 2.f) {
 						continue;
 					}
@@ -761,15 +766,15 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 			}
 		}
 	}
-	typedef void(__stdcall* Laner)(float);
-	if (Misc::speedhack && GetAsyncKeyState(Keys::speedKey)) {
-		Laner ss = (Laner)(Storage::gBase + O::UnityEngine_Time::set_timeScale); //set_timescale
-		ss(2);
-	}
-	else {
-		Laner ss = (Laner)(Storage::gBase + O::UnityEngine_Time::set_timeScale); //set_timescale
-		ss(1);
-	}
+	typedef void(__stdcall* Govard)(float);
+	//if (Misc::speedhack && GetAsyncKeyState(Keys::speedKey)) {
+	//	Govard ss = (Govard)(Storage::gBase + O::UnityEngine_Time::set_timeScale); //set_timescale //mb Later
+	//	ss(2);
+	//}
+	//else {
+	//	Govard ss = (Govard)(Storage::gBase + O::UnityEngine_Time::set_timeScale); //set_timescale
+	//	ss(1);
+	//}
 
 	IgnoreLayerCollision(layer::PlayerMovement, layer::Water, !Misc::no_playercollision);
 	IgnoreLayerCollision(layer::PlayerMovement, layer::Tree, Misc::no_playercollision);
@@ -779,7 +784,7 @@ void __fastcall ClientInput(DWORD64 baseplayah, DWORD64 ModelState) {
 }
 void Play(ViewModel* viewmodel, pUncStr name, int layer = 0) {
 	if (Misc::remove_attack_anim) {
-		if (!CALLED_BY(O::BaseProjectile::DoAttack, 0x296) || LocalPlayer.BasePlayer->GetActiveWeapon()->GetID() == -75944661) {
+		if (!CALLED_BY(0x5A4180, 0x296) || LocalPlayer.BasePlayer->GetActiveWeapon()->GetID() == -75944661) { //public virtual void DoAttack()
 			return original_viewmodelplay(viewmodel, name, layer);
 		}
 	}
@@ -798,24 +803,24 @@ inline float __fastcall Fake_GetSpeed(float* a1, float* a2)
 	return true;
 	return  Orig_GetSpeed(a1, a2);
 }
-inline void __fastcall SendProjectileAttack(void* a1, void* a2) {
-	uintptr_t PlayerAttack = read((uintptr_t)a2 + 0x18, uintptr_t); // PlayerAttack playerAttack;
-	uintptr_t Attack = read(PlayerAttack + 0x18, uintptr_t); // public Attack attack;
-	if (AimBot::pSilent) {
-		if (Storage::closestPlayer != NULL) {
-			write(Attack + 0x30, 698017942, uint32_t); // public uint hitBone;
-			write(Attack + 0x64, 16144115, uint32_t); // public uint hitPartID;
-			if (AimBot::ThroughWall) {
-				write(Attack + 0x6C, Vector3(0.f, -1000.f, 0.f) * -10000.f, Vector3); // public Vector3 hitNormalWorld;
-			}
-			write(Attack + 0x2C, read(read(Storage::closestPlayer + 0x50, uintptr_t) + 0x10, uintptr_t), uint32_t); // public uint hitID; 
-		}
-	}
-	if (AimBot::AlwaysHeadshot) {
-		write(Attack + 0x30, 698017942, uint32_t); // public uint hitBone;
-	}
-	return original_sendprojectileattack(a1, a2);
-}
+//inline void __fastcall SendProjectileAttack(void* a1, void* a2) {
+//	uintptr_t PlayerAttack = read((uintptr_t)a2 + 0x18, uintptr_t); // PlayerAttack playerAttack;
+//	uintptr_t Attack = read(PlayerAttack + 0x18, uintptr_t); // public Attack attack;
+//	if (AimBot::pSilent) {
+//		if (Storage::closestPlayer != NULL) {
+//			write(Attack + 0x30, 698017942, uint32_t); // public uint hitBone;
+//			write(Attack + 0x64, 16144115, uint32_t); // public uint hitPartID;
+//			if (AimBot::ThroughWall) {
+//				write(Attack + 0x6C, Vector3(0.f, -1000.f, 0.f) * -10000.f, Vector3); // public Vector3 hitNormalWorld;
+//			}
+//			write(Attack + 0x2C, read(read(Storage::closestPlayer + 0x50, uintptr_t) + 0x10, uintptr_t), uint32_t); // public uint hitID; 
+//		}
+//	}
+//	if (AimBot::AlwaysHeadshot) {
+//		write(Attack + 0x30, 698017942, uint32_t); // public uint hitBone;
+//	}
+//	return original_sendprojectileattack(a1, a2);
+//}
 
 // Soooo we don't have pSilent) --- TODO
 Vector3 __fastcall GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = true) { // please kill me
@@ -888,20 +893,20 @@ inline void InitHook() {
 		std::cout << "Failed to initialize Hook" << std::endl;
 		return;
 	}//	hk_((void*)(uintptr_t)(vars::stor::gBase + CO::Play), (void**)&original_viewmodelplay, hk::misc::Play);
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::ViewModel::Play), (void**)&original_viewmodelplay, Play);
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BaseCombatEntity::DoHitNotify), (void**)&original_sound, HitSound);
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0xC01980), (void**)&original_aimconedirection, GetModifiedAimConeDirection);////public static Vector3 GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = True) { }
+	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0xABF610), (void**)&original_viewmodelplay, Play); // public void Play(string anim, int layer = 0)
+	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x8F3110), (void**)&original_sound, HitSound);//public void DoHitNotify(HitInfo info)
+	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x6AEAA0), (void**)&original_aimconedirection, GetModifiedAimConeDirection);////public static Vector3 GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside = True) { }
 	//HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x2549D10), (void**)&original_consolerun, Run);//public static string Run(ConsoleSystem.Option options, string strCommand, object[] args) { }
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0xA5BB90), (void**)&original_FastBullet, GetRandomVelocity_hk); //public float GetRandomVelocity() { }
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::TOD_Sky::get_Instance), (void**)&original_mode, NightMode);
+	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x891950), (void**)&original_FastBullet, GetRandomVelocity_hk); //public float GetRandomVelocity() { }
+	//HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::TOD_Sky::get_Instance), (void**)&original_mode, NightMode);
 	//HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::ModelState::set_flying), (void**)&original_setflying, SetFlying);
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BasePlayer::SendProjectileAttack /*no change */), (void**)&original_sendprojectileattack, SendProjectileAttack);
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BasePlayer::CanAttack /*no change */), (void**)&original_canattack, CanAttack);
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BasePlayer::SendClientTick /*no change */), (void**)&original_sendclienttick, SendClientTick);
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::PlayerWalkMovement::HandleRunDuckCrawl /*no change */), (void**)&original_handleRunning, HandleRunning);
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BaseProjectile::CreateProjectile), (void**)&original_create_projectile, CreateProjectile);
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BaseMountable::CanHoldItems /*no change */), (void**)&original_canholditems, CanHoldItems);
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BasePlayer::ClientInput /*no change */), (void**)&original_clientinput, ClientInput); // internal virtual void ClientInput(InputState state) { }
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BaseProjectile::get_isSemiAuto /*no change */), (void**)&original_issemiauto, get_isSemiAuto); // internal virtual void ClientInput(InputState state) { }
-	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::InputState::IsDown /*no change */), (void**)&original_IsDown, fake_IsDown); // internal virtual void ClientInput(InputState state) { }
+	//HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + O::BasePlayer::SendProjectileAttack /*no change */), (void**)&original_sendprojectileattack, SendProjectileAttack);
+	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x7BD5F0 /*no change */), (void**)&original_canattack, CanAttack);// public bool CanAttack()
+	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x7E20C0 /*no change */), (void**)&original_sendclienttick, SendClientTick);//internal void SendClientTick()
+	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x803130 /*no change */), (void**)&original_handleRunning, HandleRunning);//private void HandleRunDuckCrawl(ModelState state, bool wantsRun, bool wantsDuck, bool wantsCrawl)
+	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x5A3F40), (void**)&original_create_projectile, CreateProjectile);// private Projectile CreateProjectile(string prefabPath, Vector3 pos, Vector3 forward, Vector3 velocity)  Class: BaseProjectail
+	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x8F8600 /*no change */), (void**)&original_canholditems, CanHoldItems);//public virtual bool CanHoldItems()
+	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x7BFDF0 /*no change */), (void**)&original_clientinput, ClientInput); // internal virtual void ClientInput(InputState state)
+	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x7BFDF0 /*no change */), (void**)&original_issemiauto, get_isSemiAuto); // internal virtual void ClientInput(InputState state) { }
+	HookFunction((void*)(uintptr_t)(GetModBase(L"GameAssembly.dll") + 0x7BFDF0 /*no change */), (void**)&original_IsDown, fake_IsDown); // internal virtual void ClientInput(InputState state) { }
 }

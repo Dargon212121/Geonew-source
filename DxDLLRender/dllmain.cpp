@@ -3,15 +3,15 @@
 
 #pragma comment(lib, "ntdll.lib")
 
-#include "discord/discord.h"
-
-Discord* g_Discord;
-
-__forceinline void discord_main()
-{
-	g_Discord->Initialize();
-	g_Discord->Update();
-}
+//#include "discord/discord.h"
+//
+//Discord* g_Discord;
+//
+//__forceinline void discord_main()
+//{
+//	g_Discord->Initialize();
+//	g_Discord->Update();
+//}
 
 
 

@@ -240,7 +240,7 @@ typedef bool(__stdcall* IsDucked)(BasePlayer*);
 void Box3D(BasePlayer* player, D2D1::ColorF color) {
 	CBounds bounds = CBounds();
 
-	IsDucked ducked = (IsDucked)(Storage::gBase + O::BasePlayer::IsDucked);
+	IsDucked ducked = (IsDucked)(Storage::gBase + 0x7CF1D0); // public bool IsDucked()
 	if (ducked(player)) {
 		bounds.center = player->GetBoneByID(l_foot).midPoint(player->GetBoneByID(r_foot)) + Vector3(0.0f, 0.55f, 0.0f);
 		bounds.extents = Vector3(0.4f, 0.65f, 0.4f);
@@ -337,7 +337,7 @@ void ESP(BasePlayer* BP, BasePlayer* LP)
 							if (LocalPlayer.BasePlayer->IsTeamMate(BP->GetSteamID()))
 							{
 								Render::Object.RoundedRectangle(Vector2{ Entity_x, Entity_y }, Vector2{ Entity_w, Entity_h }, 2.5f, D2D1::ColorF::Black, 1.f);
-								Render::Object.RoundedRectangle(Vector2{ Entity_x, Entity_y }, Vector2{ Entity_w, Entity_h }, 2.5f , D2D1::ColorF::LimeGreen, 1.f);
+								Render::Object.RoundedRectangle(Vector2{ Entity_x, Entity_y }, Vector2{ Entity_w, Entity_h }, 2.5f, D2D1::ColorF::LimeGreen, 1.f);
 							}
 							else
 							{
@@ -396,7 +396,7 @@ void ESP(BasePlayer* BP, BasePlayer* LP)
 					{
 						if ((int)BP->GetHealth() <= 33)
 						{
-							Render::Object.FillRectangle({ Entity_x + (Entity_w / 2) + -50, Entity_y + 0}, { 100 * (health / maxheal), 5 }, D2D1::ColorF(255.f, 0.f, 0.f, 0.8f));
+							Render::Object.FillRectangle({ Entity_x + (Entity_w / 2) + -50, Entity_y + 0 }, { 100 * (health / maxheal), 5 }, D2D1::ColorF(255.f, 0.f, 0.f, 0.8f));
 						}
 						if ((int)BP->GetHealth() >= 34 && (int)BP->GetHealth() <= 66)
 						{

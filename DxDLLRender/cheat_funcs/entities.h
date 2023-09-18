@@ -67,7 +67,7 @@ void EntityZaLoop()
 		FindMatrix();
 	}
 	DWORD64 BaseNetworkable;
-	BaseNetworkable = read(Storage::gBase + 0x36567B8, DWORD64); //BaseNetworkable_c
+	BaseNetworkable = read(Storage::gBase + 0x3352368, DWORD64); //BaseNetworkable_c
 	DWORD64 EntityRealm = read(BaseNetworkable + 0xB8, DWORD64);
 	DWORD64 ClientEntities = read(EntityRealm, DWORD64);
 	DWORD64 ClientEntities_list = read(ClientEntities + 0x10, DWORD64);
@@ -90,7 +90,7 @@ void EntityZaLoop()
 		BasePlayer* Player = (BasePlayer*)read(Object + 0x28, DWORD64);
 		if (strstr(buff, StrA("Local"))) {
 			Player = (BasePlayer*)read(Object + 0x28, DWORD64);
-			if (!read(Player + O::BasePlayer::playerModel, DWORD64)) continue;
+			if (!read(Player + 0x5E8, DWORD64)) continue;// public PlayerModel playerModel;
 			if (Player != LocalPlayer.BasePlayer) {
 				printf("LocalPlayer %lld\n", Player->GetSteamID());
 				mfound = false;
@@ -103,7 +103,7 @@ void EntityZaLoop()
 		{
 			BasePlayer* Player = (BasePlayer*)read(Object + 0x28, DWORD64);
 			BasePlayer* Local = (BasePlayer*)read(Object + 0x28, DWORD64);
-			if (!read(Player + O::BasePlayer::playerModel, DWORD64)) continue;
+			if (!read(Player + 0x5E8, DWORD64)) continue;// public PlayerModel playerModel;
 			OOF(Player, D2D1::ColorF::Blue);
 			ESP(Player, LocalPlayer.BasePlayer);
 			RadarPlayer(Player);

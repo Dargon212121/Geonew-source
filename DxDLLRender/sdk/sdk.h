@@ -425,30 +425,30 @@ namespace rust {
 			MeleeAttack = 3,
 			Use = 4,
 		};
-	/*	class game_object {
-		public:
-			template<typename T>
-			T get_class()
-			{
-				return *reinterpret_cast<T*>((uintptr_t)this + 0x30);
-			}
+		/*	class game_object {
+			public:
+				template<typename T>
+				T get_class()
+				{
+					return *reinterpret_cast<T*>((uintptr_t)this + 0x30);
+				}
 
-			template<typename T>
-			T get_class(uint32_t second_offset)
-			{
-				const auto object = *reinterpret_cast<uintptr_t*>((uintptr_t)this + 0x30);
-				if (!object)
-					return nullptr;
+				template<typename T>
+				T get_class(uint32_t second_offset)
+				{
+					const auto object = *reinterpret_cast<uintptr_t*>((uintptr_t)this + 0x30);
+					if (!object)
+						return nullptr;
 
-				return *reinterpret_cast<T*>(object + second_offset);
-			}
+					return *reinterpret_cast<T*>(object + second_offset);
+				}
 
-			char* get_prefab_name() { return *reinterpret_cast<char**>((uintptr_t)this + 0x60); }
+				char* get_prefab_name() { return *reinterpret_cast<char**>((uintptr_t)this + 0x60); }
 
-			uint32_t get_tag() { return *reinterpret_cast<uint16_t*>((uintptr_t)this + 0x54); }
+				uint32_t get_tag() { return *reinterpret_cast<uint16_t*>((uintptr_t)this + 0x54); }
 
-			layer get_layer() { return *reinterpret_cast<layer*>(this + 0x50); }
-		};*/
+				layer get_layer() { return *reinterpret_cast<layer*>(this + 0x50); }
+			};*/
 		class string {
 		public:
 			char zpad[0x10];
@@ -463,8 +463,8 @@ namespace rust {
 				str[size] = 0;
 			}
 		};
-	
-	
+
+
 	}
 }
 class col {
@@ -618,10 +618,10 @@ public:
 class Mathf {
 public:
 	static float Abs(float a) {
-		return reinterpret_cast<float(_fastcall*)(float)>(Storage::gBase + O::UnityEngine_Mathf::Abs)(a);
+		return reinterpret_cast<float(_fastcall*)(float)>(Storage::gBase + 0x2872E80)(a); //public static int Abs(int value) { }            Class: UnityEngine
 	}
 	static float Max(float a, float b) {
-		return reinterpret_cast<float(_fastcall*)(float, float)>(Storage::gBase + O::UnityEngine_Mathf::Max)(a, b);
+		return reinterpret_cast<float(_fastcall*)(float, float)>(Storage::gBase + 0x28737B0)(a, b);// public static float Max(float a, float b)          
 	}
 };
 typedef struct _UncStr
@@ -686,7 +686,7 @@ public:
 
 };
 class Attack {
-	Vector3 hitPositionWorld = read(this + O::HitInfo::HitPositionWorld, Vector3);
+	Vector3 hitPositionWorld = read(this + 0x54, Vector3); // public Vector3 HitPositionWorld;     Class: HitInfo
 };
 class HitInfo {
 };
@@ -753,7 +753,7 @@ public:
 		return read(this + 0x98, uintptr_t);
 	}
 	uintptr_t Held() {
-		return read(this + O::Item::heldEntity, uintptr_t);//0x98
+		return read(this + 0xA8, uintptr_t);// private EntityRef heldEntity;
 	}
 	int count() {
 		return read(this + 0x30, int);
@@ -761,11 +761,11 @@ public:
 	int GetID()
 	{
 		DWORD64 Info = read((DWORD64)this + 0x20, DWORD64); // public ItemDefinition info;
-		int ID = read(Info + O::ItemDefinition::itemid, int);
+		int ID = read(Info + 0x18, int); // public int itemid;
 		return ID;
 	}
 	char* ClassName() {
-		return (char*)read(read(read(this + O::Item::heldEntity, DWORD64), DWORD64) + 0x10, DWORD64);
+		return (char*)read(read(read(this + 0xA8, DWORD64), DWORD64) + 0x10, DWORD64); // private EntityRef heldEntity;
 	}
 	Weapon Info() {
 		int ID = GetID();
@@ -793,10 +793,10 @@ public:
 	}
 	int LoadedAmmo()
 	{
-		const auto Held = read(this + O::Item::heldEntity, DWORD64);
+		const auto Held = read(this + 0xA8, DWORD64); // private EntityRef heldEntity;
 		if (Held <= 0)
 			return 0;
-		const auto Magazine = read(Held + O::BaseProjectile::primaryMagazine, DWORD64);
+		const auto Magazine = read(Held + 0x2C0, DWORD64); // public global::BaseProjectile.Magazine primaryMagazine;
 		if (Magazine <= 0 || Magazine == 0x3F000000)
 		{
 			return 0;
@@ -823,11 +823,11 @@ public:
 	}
 	const wchar_t* GetName2() {
 		if (this == nullptr) return nullptr;
-		DWORD64 held = read(this + O::Item::heldEntity, DWORD64);
+		DWORD64 held = read(this + 0xA8, DWORD64); // private EntityRef heldEntity;
 		if (!held) return nullptr;
 
 		typedef pUncStr(__stdcall* GetName)(DWORD64);
-		pUncStr nm = ((GetName)(Storage::gBase + O::BaseNetworkable::get_ShortPrefabName))(held);
+		pUncStr nm = ((GetName)(Storage::gBase + 0x788060))(held); //O::BaseNetworkable::get_ShortPrefabName
 		if (!nm) return nullptr;
 		return nm->str;
 	}
@@ -838,16 +838,16 @@ public:
 	{
 		if (Weapons::SuperBow)
 		{
-			DWORD64 Held = read(this + O::Item::heldEntity, DWORD64);
-			write(Held + O::BowWeapon::attackReady, 1, bool); 
-			write(Held + O::BowWeapon::arrowBack, 3.f, float); 
+			DWORD64 Held = read(this + 0xA8, DWORD64); // private EntityRef heldEntity;
+			write(Held + 0x3A0, 1, bool);  // protected bool attackReady;
+			write(Held + 0x3A0, 3.f, float);  // private float arrowBack;
 		}
 	}
 
 	std::string GetAmmoType()
 	{
-		const auto Held = read(this + O::Item::heldEntity, DWORD64);
-		const auto Magazine = read(Held + O::BaseProjectile::primaryMagazine, DWORD64);
+		const auto Held = read(this + 0xA8, DWORD64); // private EntityRef heldEntity;
+		const auto Magazine = read(Held + 0x2C0, DWORD64); // public global::BaseProjectile.Magazine primaryMagazine;
 		uint64_t item_def = read(Magazine + 0x20, uint64_t);
 		uint64_t short_name = read(item_def + 0x20, uint64_t);
 		std::wstring wide_name = read(short_name + 0x14, std::wstring);
@@ -860,34 +860,34 @@ public:
 
 	void SetAutomatic() {
 		if (Weapons::Automatic) {
-			DWORD64 Held = read(this + O::Item::heldEntity, DWORD64);
-			write(Held + O::BaseProjectile::automatic, 1, bool);
+			DWORD64 Held = read(this + 0xA8, DWORD64); // private EntityRef heldEntity;
+			write(Held + 0x290, 1, bool); // public bool automatic;
 		}
 	}
 	void SuperEoka() {
 		if (Weapons::SuperEoka) {
-			DWORD64 Held = read(this + O::Item::heldEntity, DWORD64); 
-			write(Held + O::BowWeapon::attackReady, 1.f, float); 
-			write(Held + O::BowWeapon::wasAiming, true, bool);
+			DWORD64 Held = read(this + 0xA8, DWORD64); // private EntityRef heldEntity;
+			write(Held + 0x3A0, 1.f, float); // protected bool attackReady;
+			write(Held + 0x3B0, true, bool); // private bool wasAiming;
 		}
 	}
 	void RapidFire() {
 		if (Misc::RapidFire) {
 			DWORD64 heldentity = this->entity();
-			write(heldentity + O::AttackEntity::repeatDelay, 0.0009f, float);
+			write(heldentity + 0x1FC, 0.0009f, float); // public float repeatDelay;
 		}
 	}
 	void LongHand() {
-		DWORD64 Held = read(this + O::Item::heldEntity, DWORD64);
-		write(Held + O::BaseMelee::maxDistance, 4.5f, float); 
+		DWORD64 Held = read(this + 0xA8, DWORD64); // private EntityRef heldEntity;
+		write(Held + 0x290, 4.5f, float); // public float maxDistance;
 	}
 	void FatHand() {
-		DWORD64 Held = read(this + O::Item::heldEntity, DWORD64);
-		write(Held + O::BaseMelee::attackRadius, 15.f, float);
+		DWORD64 Held = read(this + 0xA8, DWORD64); // private EntityRef heldEntity;
+		write(Held + 0x294, 15.f, float); // public float attackRadius;
 	}
 	void RunOnHit() {
-		DWORD64 Held = read(this + O::Item::heldEntity, DWORD64);
-		write(Held + O::BaseMelee::blockSprintOnAttack, 0, int);
+		DWORD64 Held = read(this + 0xA8, DWORD64); // private EntityRef heldEntity;
+		write(Held + 0x299, 0, int); // public bool blockSprintOnAttack;
 	}
 };
 class SafeExecution {
@@ -914,7 +914,7 @@ public:
 class Physics {
 public:
 	static bool CheckCapsule(Vector3 start, Vector3 end, float radius, int layerMask, QueryTriggerInteraction queryTriggerInteraction) {
-		return SafeExecution::Execute<bool>(Storage::gBase + O::UnityEngine_Physics::CheckCapsule, false, start, end, radius, layerMask, queryTriggerInteraction);
+		return SafeExecution::Execute<bool>(Storage::gBase + 0x28D5E10, false, start, end, radius, layerMask, queryTriggerInteraction); // public static bool CheckCapsule(Vector3 start, Vector3 end, float radius, int layerMask, QueryTriggerInteraction queryTriggerInteraction) { }
 	}
 };
 class PlayerTick {
@@ -928,16 +928,16 @@ public:
 	}
 
 };
-class PlayerEyes{
+class PlayerEyes {
 public:
 	Quaternion get_rotation() {
 		typedef Quaternion(__stdcall* get_rotation)(PlayerEyes*);
-		Quaternion result = ((get_rotation)(Storage::gBase + O::PlayerEyes::get_rotation))(this);
+		Quaternion result = ((get_rotation)(Storage::gBase + 0x7AE6F0))(this); // O::PlayerEyes::get_rotation
 		return result;
 	}
 	Vector2 get_position() {
 		typedef Vector2(__stdcall* get_position)(PlayerEyes*);
-		Vector2 result = ((get_position)(Storage::gBase + O::PlayerEyes::get_rotation))(this);
+		Vector2 result = ((get_position)(Storage::gBase + 0x7AE6F0))(this); // O::PlayerEyes::get_rotation
 		return result;
 	}
 };
@@ -958,22 +958,22 @@ class BasePlayer
 {
 public:
 
-	PlayerEyes* eyest() { return read(this + O::BasePlayer::eyes, PlayerEyes*); }
+	PlayerEyes* eyest() { return read(this + 0x828, PlayerEyes*); } // public PlayerEyes eyes;
 	float GetHealth() {
-		return read(this + O::BaseCombatEntity::_health, float);
+		return read(this + 0x24C, float); // protected float _health;
 	}
 	const wchar_t* GetName() {
-		pUncStr Str = ((pUncStr)(read(this + O::BasePlayer::_displayName, DWORD64)));
+		pUncStr Str = ((pUncStr)(read(this + 0x880, DWORD64))); // protected string _displayName;
 		if (!Str) return StrW(L""); return Str->str;
 	}
 	Vector3 GetVelocity() {
-		DWORD64 PlayerModel = read(this + O::BasePlayer::playerModel, DWORD64);
-		return read(PlayerModel + O::PlayerModel::newVelocity, Vector3);
+		DWORD64 PlayerModel = read(this + 0x5E8, DWORD64); // public PlayerModel playerModel;
+		return read(PlayerModel + 0x1DC, Vector3); // private Vector3 newVelocity;
 	}
 	bool IsVisible() {
 		if (AimBot::VisibleCheck) {
-			DWORD64 PlayerModel = read(this + O::BasePlayer::playerModel, DWORD64);
-			return read(PlayerModel + O::PlayerModel::visible, bool);
+			DWORD64 PlayerModel = read(this + 0x5E8, DWORD64); // public PlayerModel playerModel;
+			return read(PlayerModel + 0x22C, bool); // internal bool visible;
 		}
 		else return true;
 	}
@@ -982,21 +982,22 @@ public:
 	}
 	void SetFov()
 	{
-			auto klass = read(Storage::gBase + 0x3657380, DWORD64);//ConVar.Graphics_TypeInfo
-			auto static_fields = read(klass + 0xB8, DWORD64);
-			write(static_fields + 0x18, Misc::FovRange, float);
+		auto klass = read(Storage::gBase + 0x338F418, DWORD64);//ConVar.Graphics_TypeInfo
+		auto static_fields = read(klass + 0xB8, DWORD64);
+		write(static_fields + 0x18, Misc::FovRange, float);
 	}
 
-	void walkOnWater() {
-		if (GetAsyncKeyState(Keys::walkonWaterKey)) {
-			Write<float>(this->playerMovement + O::PlayerWalkMovement::groundAngle, 0.f);//groundAngle
-			Write<float>(this->playerMovement + O::PlayerWalkMovement::groundAngleNew, 0.f);//groundAngleNew
-			Write<float>(this->playerMovement + O::PlayerWalkMovement::gravityMultiplier, 0.f);//gravityMultiplier
-		}
-		else {
-			Write<float>(this->playerMovement + O::PlayerWalkMovement::gravityMultiplier, 2.5f);//gravityMultiplier
-		}
-	}
+	//Not today
+	//void walkOnWater() {
+	//	if (GetAsyncKeyState(Keys::walkonWaterKey)) {
+	//		Write<float>(this->playerMovement + O::PlayerWalkMovement::groundAngle, 0.f);//groundAngle
+	//		Write<float>(this->playerMovement + O::PlayerWalkMovement::groundAngleNew, 0.f);//groundAngleNew
+	//		Write<float>(this->playerMovement + O::PlayerWalkMovement::gravityMultiplier, 0.f);//gravityMultiplier
+	//	}
+	//	else {
+	//		Write<float>(this->playerMovement + O::PlayerWalkMovement::gravityMultiplier, 2.5f);//gravityMultiplier
+	//	}
+	//}
 	uint64_t playerMovement{};
 
 	//void  WalkWater(bool enable) Shit
@@ -1043,33 +1044,33 @@ public:
 		if (FC(user32, GetAsyncKeyState, Misc::Zoomkey))
 		{
 
-			auto klass = read(Storage::gBase + 0x3657380, DWORD64); //ConVar.Graphics_TypeInfo //0x2965510 old
+			auto klass = read(Storage::gBase + 0x338F418, DWORD64); //ConVar.Graphics_TypeInfo //0x2965510 old
 			auto static_fields = read(klass + 0xB8, DWORD64);
 			write(static_fields + 0x18, Misc::Zoomvalue, float);
 		}
 		else
 		{
-			auto klass = read(Storage::gBase + 0x3657380, DWORD64); //ConVar.Graphics_TypeInfo //0x2965510 old
+			auto klass = read(Storage::gBase + 0x338F418, DWORD64); //ConVar.Graphics_TypeInfo //0x2965510 old
 			auto static_fields = read(klass + 0xB8, DWORD64);
 			write(static_fields + 0x18, Misc::FovRange, float);
 		}
 	}
 	void InfinityJump()
 	{
-		INT64 Movement = read((const uintptr_t)this + O::BasePlayer::movement, UINT64);
-		write(Movement + O::PlayerWalkMovement::groundAngleNew, Vector3(0, 1000000, 0), Vector3);
-		write(Movement + O::PlayerWalkMovement::groundAngle, Vector3(9999999, 9999999, 9999999), Vector3);
+		INT64 Movement = read((const uintptr_t)this + 0x610, UINT64); // public BaseMovement movement;
+		write(Movement + 0xC8, Vector3(0, 1000000, 0), Vector3); // private float groundAngleNew;
+		write(Movement + 0xC4, Vector3(9999999, 9999999, 9999999), Vector3); // private float groundAngle;
 	}
 	void LongNeck() {
-		DWORD64 eyes = read(this + O::BasePlayer::eyes, DWORD64);
-		write(eyes + O::PlayerEyes::viewOffset, Vector3(0, 1.5f, 0), Vector3); 
+		DWORD64 eyes = read(this + 0x828, DWORD64); // public PlayerEyes eyes;
+		write(eyes + 0x38, Vector3(0, 1.5f, 0), Vector3); // private Vector3 viewOffset;
 	}
 	void LongNeckrLeft()
 	{
 		if (FC(user32, GetAsyncKeyState, Misc::LongNeckkeyLongNeckLeft))
 		{
-			DWORD64 eyes = read(this + O::BasePlayer::eyes, DWORD64);
-			write(eyes + O::PlayerEyes::viewOffset, Vector3(-1.f, (0), 0), Vector3);
+			DWORD64 eyes = read(this + 0x828, DWORD64);// public PlayerEyes eyes;
+			write(eyes + 0x38, Vector3(-1.f, (0), 0), Vector3);// private Vector3 viewOffset;
 		}
 		return;
 	}
@@ -1077,22 +1078,22 @@ public:
 	{
 		if (FC(user32, GetAsyncKeyState, Misc::LongNeckkey))
 		{
-			DWORD64 eyes = read(this + O::BasePlayer::eyes, DWORD64);
-			write(eyes + O::PlayerEyes::viewOffset, Vector3(1.f, (0), 0), Vector3);
+			DWORD64 eyes = read(this + 0x828, DWORD64);// public PlayerEyes eyes;
+			write(eyes + 0x38, Vector3(1.f, (0), 0), Vector3);// private Vector3 viewOffset;
 		}
 		return;
 	}
 	float GetJumpHeight() {
-		return reinterpret_cast<float(_fastcall*)(BasePlayer*)>(Storage::gBase + O::BasePlayer::GetHeight)(this);
+		return reinterpret_cast<float(_fastcall*)(BasePlayer*)>(Storage::gBase + 0x7C87E0)(this); // public float GetHeight(bool ducked)
 	}
 	float GetTickTime() {
-		return read(this + O::BasePlayer::lastSentTickTime, float);
+		return read(this + 0x7EC, float); // private float lastSentTickTime;
 	}
 	bool IsValid(bool LPlayer = false) {
 		return (((LPlayer || PlayerEsp::sleeperignore) ? !HasFlags(16) : true) && !IsDead() && (GetHealth() >= 0.8f));
 	}
 	bool HasFlags(int Flg) {
-		return (read(this + O::BasePlayer::playerFlags, int) & Flg);
+		return (read(this + 0x820, int) & Flg); // public global::BasePlayer.PlayerFlags playerFlags;
 	}
 	Vector3 GetPosition() {
 		return GetPosition(GetTransform(Global::BoneToAim));
@@ -1101,27 +1102,27 @@ public:
 		return GetPosition(GetTransform(BoneID));
 	}
 	bool IsNpc() {
-		DWORD64 PlayerModel = read(this + O::BasePlayer::playerModel, DWORD64);
-		return read(PlayerModel + O::PlayerModel::IsNpck__BackingField, bool);
+		DWORD64 PlayerModel = read(this + 0x5E8, DWORD64); // public PlayerModel playerModel;
+		return read(PlayerModel + 0x7FE3F0, bool); // public bool IsNpc
 	}
 	bool IsDestroyed() {
 		if (!this) return true;
-		return *reinterpret_cast<bool*>(this + O::BaseNetworkable::IsDestroyedk__BackingField);
+		return *reinterpret_cast<bool*>(this + 0x3B4B10);// public bool IsDestroyed
 	}
 	int GetTeamSize()
 	{
-		DWORD64 ClientTeam = read(this + O::BasePlayer::clientTeam, DWORD64);
-		DWORD64 members = read(ClientTeam + 0x30, DWORD64);//	private ListHashSet<ILOD> members; //public PlayerInventory inventory; // 0x28 ���  public List<PlayerTeam.TeamMember> members; // 0x28
+		DWORD64 ClientTeam = read(this + 0x710, DWORD64); // public PlayerTeam clientTeam;
+		DWORD64 members = read(ClientTeam + 0x30, DWORD64);//	private ListHashSet<ILOD> members; //public PlayerInventory inventory; // 0x28      public List<PlayerTeam.TeamMember> members; // 0x28
 		return read(members + 0x18, DWORD64);
 	}
 	DWORD64 GetTeammateByPos(int Id) {
-		DWORD64 ClientTeam = read(this + O::BasePlayer::clientTeam, DWORD64);
+		DWORD64 ClientTeam = read(this + 0x710, DWORD64); // public PlayerTeam clientTeam;
 		DWORD64 members = read(ClientTeam + 0x30, DWORD64);
 		DWORD64 List = read(members + 0x10, DWORD64);
 		DWORD64 player = read(List + 0x20 + (Id * 0x8), DWORD64);
 		return read(player + 0x20, DWORD64);
 	}
-	PlayerTick* lastSentTick() { return read(this + O::BasePlayer::lastSentTickTime, PlayerTick*); }
+	PlayerTick* lastSentTick() { return read(this + 0x7EC, PlayerTick*); } // private float lastSentTickTime;
 	bool IsTeamMate(DWORD64 SteamID) {
 		bool ret = false;
 
@@ -1135,14 +1136,14 @@ public:
 	}
 	bool IsDead() {
 		if (!this) return true;
-		return read(this + O::BaseCombatEntity::lifestate, bool);;
+		return read(this + 0x244, bool); // public BaseCombatEntity.LifeState lifestate;
 	}
 	float GetTick() {
-		return read(reinterpret_cast<uintptr_t>(this) + O::BasePlayer::lastSentTickTime, float);
+		return read(reinterpret_cast<uintptr_t>(this) + 0x7EC, float); // private float lastSentTickTime;
 	}
 	bool HasFlag(int PlayerFlag)
 	{
-		return (read(this + O::BasePlayer::playerFlags, int) & PlayerFlag);
+		return (read(this + 0x820, int) & PlayerFlag); // public global::BasePlayer.PlayerFlags playerFlags;
 	}
 	bool IsSleeping()
 	{
@@ -1165,55 +1166,55 @@ public:
 	}
 
 	DWORD64 GetSteamID() {
-		return read(this + O::BasePlayer::userID, DWORD64);
+		return read(this + 0x868, DWORD64); // public ulong userID;
 	}
 	bool IsMenu() {
 		if (!this) return true;
-		DWORD64 Input = read(this + O::BasePlayer::input, DWORD64);
-		return !(read(Input + O::PlayerInput::hasKeyFocus, bool));
+		DWORD64 Input = read(this + 0x608, DWORD64); // public PlayerInput input;
+		return !(read(Input + 0xAC, bool)); // private bool hasKeyFocus;
 	}
 	void SetVA(const Vector2& VA) {
-		DWORD64 Input = read(this + O::BasePlayer::input, DWORD64);
+		DWORD64 Input = read(this + 0x608, DWORD64); // public PlayerInput input;
 		write(Input + 0x3C, VA, Vector2); //private Vector3 bodyAngles;
 	}
 	Vector2 viewangles() {
-		DWORD64 Input = read(this + O::BasePlayer::input, DWORD64);
+		DWORD64 Input = read(this + 0x608, DWORD64); // public PlayerInput input;
 		return read(Input + 0x3C, Vector2); //private Vector3 bodyAngles;
 	}
 	void AddFlag(int flag) {
-		DWORD64 mstate = read(this + O::BasePlayer::modelState, DWORD64);
-		int flags = read(mstate + O::ModelState::flags, int);
-		write(mstate + O::ModelState::flags, flags |= flag, int);
+		DWORD64 mstate = read(this + 0x770, DWORD64); // public ModelState modelState;
+		int flags = read(mstate + 0x20, int); // public int flags;
+		write(mstate + 0x20, flags |= flag, int);// public int flags;
 	}
 	void RemoveFlag(int flag) {
-		DWORD64 mstate = read(this + O::BasePlayer::modelState, DWORD64);
+		DWORD64 mstate = read(this + 0x770, DWORD64); // public ModelState modelState;
 
-		int flags = read(mstate + O::ModelState::flags, int);
-		write(mstate + O::ModelState::flags, flags &= flag, int);
+		int flags = read(mstate + 0x20, int); // public int flags;
+		write(mstate + 0x20, flags &= flag, int); // public int flags;
 	}
 	void SetRA()
 	{
-		DWORD64 Input = read(this + O::BasePlayer::input, DWORD64);
+		DWORD64 Input = read(this + 0x608, DWORD64);// public PlayerInput input;
 		Vector2 RA = { 0.f, 0.f };
-		write(Input + O::PlayerInput::recoilAngles, RA, Vector2);
+		write(Input + 0x64, RA, Vector2); // public Vector3 recoilAngles;
 	}
 	Vector2 GetVA() {
-		DWORD64 Input = read(this + O::BasePlayer::input, DWORD64);
-		return read(Input + O::PlayerInput::bodyAngles, Vector2); //private Vector3 bodyAngles;
+		DWORD64 Input = read(this + 0x608, DWORD64); // public PlayerInput input;
+		return read(Input + 0x3C, Vector2); //private Vector3 bodyAngles;
 	}
 	Vector2 GetRA() {
-		DWORD64 Input = read(this + O::BasePlayer::input, DWORD64);
-		return read(Input + O::PlayerInput::recoilAngles, Vector2);
+		DWORD64 Input = read(this + 0x608, DWORD64);// public PlayerInput input;
+		return read(Input + 0x64, Vector2); // public Vector3 recoilAngles;
 	}
 	WeaponData* GetWeaponInfo(int Id) {
-		DWORD64 Inventory = read(this + O::BasePlayer::inventory, DWORD64);
+		DWORD64 Inventory = read(this + 0x830, DWORD64);// public global::PlayerInventory inventory;
 		DWORD64 Belt = read(Inventory + 0x28, DWORD64);
-		DWORD64 ItemList = read(Belt + 0x38, DWORD64);// public List<Item> itemList;
+		DWORD64 ItemList = read(Belt + 0x40, DWORD64);// public List<Item> itemList;
 		DWORD64 Items = read(ItemList + 0x10, DWORD64); //	public List<InventoryItem.Amount> items;
 		return (WeaponData*)read(Items + 0x20 + (Id * 0x8), DWORD64);
 	}
 	WeaponData* GetActiveWeapon() {
-		int ActUID = read(this + O::BasePlayer::clActiveItem, int);
+		int ActUID = read(this + 0x740, int); // private ItemId clActiveItem;
 		if (!ActUID) return nullptr;
 		WeaponData* ActiveWeapon;
 		for (int i = 0; i < 6; i++)
@@ -1223,88 +1224,88 @@ public:
 		return 0;
 	}
 	List<WeaponData*>* item_list_b() {
-		DWORD64 Inventory = read(this + O::BasePlayer::inventory, DWORD64);
+		DWORD64 Inventory = read(this + 0x830, DWORD64); // public global::PlayerInventory inventory;
 		DWORD64 Belt = read(Inventory + 0x28, DWORD64); // containerBelt
-		return read(Belt + 0x38, List<WeaponData*>*);// public List<Item> itemList;
+		return read(Belt + 0x40, List<WeaponData*>*);// public List<Item> itemList;
 	}
 	List<WeaponData*>* item_list_w() {
-		DWORD64 Inventory = read(this + O::BasePlayer::inventory, DWORD64);
+		DWORD64 Inventory = read(this + 0x830, DWORD64); // public global::PlayerInventory inventory;
 		DWORD64 Belt = read(Inventory + 0x30, DWORD64); // containerWear
-		return read(Belt + 0x38, List<WeaponData*>*);// public List<Item> itemList;
+		return read(Belt + 0x40, List<WeaponData*>*);// public List<Item> itemList;
 	}
 	void FakeAdmin() {
 
-		int Flags = read(this + O::BasePlayer::playerFlags, int);
-		write(this + O::BasePlayer::playerFlags, (Flags |= 4), int);
+		int Flags = read(this + 0x820, int); // public global::BasePlayer.PlayerFlags playerFlags;
+		write(this + 0x820, (Flags |= 4), int); // public global::BasePlayer.PlayerFlags playerFlags;
 		return;
 	}
 	void SpiderMan() {
-		DWORD64 Movement = read(this + O::BasePlayer::movement, DWORD64);
-		write(Movement + O::PlayerWalkMovement::groundAngle, 0.f, float);
-		write(Movement + O::PlayerWalkMovement::groundAngleNew, 0.f, float);
+		DWORD64 Movement = read(this + 0x610, DWORD64); // public BaseMovement movement;
+		write(Movement + 0xC4, 0.f, float); // private float groundAngle;
+		write(Movement + 0xC8, 0.f, float); // private float groundAngleNew;
 	}
 	void NoSway() {
-		write(this + O::BasePlayer::clothingAccuracyBonus, 1.f, float);
+		write(this + 0x8FC, 1.f, float); // public float clothingAccuracyBonus;
 	}
 
 	void NoSpread()
 	{
-			DWORD64 Held = read((const uintptr_t)this + 0xA0, DWORD64);// private EntityRef heldEntity ..private EntityRef heldEntity; // 0x98 //private EntityRef heldEntity
-			write(Held + 0x348, 0.f, float);// private float stancePenalty;
-			write(Held + 0x34C, 0.f, float);// private float aimconePenalty;
-			write(Held + 0x2F0, 0.f, float);// public float aimCone;	
-			write(Held + 0x2F4, 0.f, float);// public float hipAimCone;
-			write(Held + 0x2F8, 0.f, float);// public float aimconePenaltyPerShot;
+		DWORD64 Held = read((const uintptr_t)this + 0xA8, DWORD64);// private EntityRef heldEntity ..private EntityRef heldEntity; // 0x98 //private EntityRef heldEntity
+		write(Held + 0x348, 0.f, float);// private float stancePenalty;
+		write(Held + 0x34C, 0.f, float);// private float aimconePenalty;
+		write(Held + 0x2F0, 0.f, float);// public float aimCone;	
+		write(Held + 0x2F4, 0.f, float);// public float hipAimCone;
+		write(Held + 0x2F8, 0.f, float);// public float aimconePenaltyPerShot;
 	}
 
 	void NoRecoil()
 	{
-			DWORD64 Held = read((const uintptr_t)this + 0xA0, DWORD64);// private EntityRef heldEntity
-			DWORD64 recoil = read(Held + 0x2E0, DWORD64); // public RecoilProperties recoil;
-			write(recoil + 0x18, 0.f, float);// public float recoilYawMin;
-			write(recoil + 0x1C, 0.f, float);// public float recoilYawMax;
-			write(recoil + 0x20, 0.f, float);// public float recoilPitchMin;
-			write(recoil + 0x24, 0.f, float);// public float recoilPitchMax;
-			//safe_write(recoil + 0x30, 0.f, float); //public float ADSScale; 
-			//safe_write(recoil + 0x34, 0.f, float); //public float movementPenalty; 		
+		DWORD64 Held = read((const uintptr_t)this + 0xA8, DWORD64);// private EntityRef heldEntity
+		DWORD64 recoil = read(Held + 0x2E0, DWORD64); // public RecoilProperties recoil;
+		write(recoil + 0x18, 0.f, float);// public float recoilYawMin;
+		write(recoil + 0x1C, 0.f, float);// public float recoilYawMax;
+		write(recoil + 0x20, 0.f, float);// public float recoilPitchMin;
+		write(recoil + 0x24, 0.f, float);// public float recoilPitchMax;
+		//safe_write(recoil + 0x30, 0.f, float); //public float ADSScale; 
+		//safe_write(recoil + 0x34, 0.f, float); //public float movementPenalty; 		
 	}
 
 	void NoBlockAiming() {
-		write(this + O::BasePlayer::clothingAccuracyBonus, false, bool);
+		write(this + 0x8FC, false, bool); // public float clothingAccuracyBonus;
 	}
 	void NoHeavyReduct() {
-		float Reduct = read(this + O::BasePlayer::clothingMoveSpeedReduction, float);
-		if (Reduct == 0.f) { write(this + O::BasePlayer::clothingMoveSpeedReduction, -0.1f, float); }
+		float Reduct = read(this + 0x8F4, float); // public float clothingMoveSpeedReduction;
+		if (Reduct == 0.f) { write(this + 0x8F4, -0.1f, float); }// public float clothingMoveSpeedReduction;
 		else if ((Reduct > 0.15f) && (Reduct < 0.35f)) {
-			write(this + O::BasePlayer::clothingMoveSpeedReduction, 0.15f, float);
+			write(this + 0x8F4, 0.15f, float);// public float clothingMoveSpeedReduction;
 		}
 		else if (Reduct > 0.39f) {
-			write(this + O::BasePlayer::clothingMoveSpeedReduction, 0.15f, float);
+			write(this + 0x8F4, 0.15f, float);// public float clothingMoveSpeedReduction;
 		}
 	}
 	void Admintime()
 	{
-		DWORD64 Client = read(Storage::gBase + 0x3653F20, DWORD64); //ConVar_Admin_c*
-		DWORD64 pizda = read(Client + 0xB8, DWORD64); //ну тут да можете пастить не маргает лицушка тоже екстернал горобчик ахуенчик
-		write(pizda + 0x0, Misc::Time, float);
+		//DWORD64 Client = read(Storage::gBase + 0x3653F20, DWORD64); //ConVar_Admin_c*
+		//DWORD64 pizda = read(Client + 0xB8, DWORD64); //ну тут да можете пастить не маргает лицушка тоже екстернал горобчик ахуенчик
+		//write(pizda + 0x0, Misc::Time, float);
 	}
 	void NightMode() {
 
-			static DWORD64 dwGameObjectManager = 0;
-			UINT64 ObjMgr = read(GetModBase(StrW((L"UnityPlayer.dll"))) + 0x17C1F18, UINT64);
-			UINT64 end = read(ObjMgr, UINT64);
-			DWORD64 Obj = read(ObjMgr + 0x8, DWORD64); (Obj && (Obj != read(ObjMgr, DWORD64))); Obj = read(Obj + 0x8, DWORD64);
-			DWORD64 GameObject = read(Obj + 0x10, DWORD64);
-			DWORD64 ObjClass = read(GameObject + 0x30, DWORD64);
-			DWORD64 Entity = read(ObjClass + 0x18, DWORD64); 
-			DWORD64 Dome = read(Entity + 0x28, DWORD64);
-			DWORD64 TodCycle2 = read(Dome + 0x38, DWORD64);
-			write(TodCycle2 + 0x10, 01.00f, float);
-			return;
+		static DWORD64 dwGameObjectManager = 0;
+		UINT64 ObjMgr = read(GetModBase(StrW((L"UnityPlayer.dll"))) + 0x17C1F18, UINT64);
+		UINT64 end = read(ObjMgr, UINT64);
+		DWORD64 Obj = read(ObjMgr + 0x8, DWORD64); (Obj && (Obj != read(ObjMgr, DWORD64))); Obj = read(Obj + 0x8, DWORD64);
+		DWORD64 GameObject = read(Obj + 0x10, DWORD64);
+		DWORD64 ObjClass = read(GameObject + 0x30, DWORD64);
+		DWORD64 Entity = read(ObjClass + 0x18, DWORD64);
+		DWORD64 Dome = read(Entity + 0x28, DWORD64);
+		DWORD64 TodCycle2 = read(Dome + 0x38, DWORD64);
+		write(TodCycle2 + 0x10, 01.00f, float);
+		return;
 	}
 	void SetGravity(float val) {
-		DWORD64 Movement = read(this + O::BasePlayer::movement, DWORD64);
-		write(Movement + O::PlayerWalkMovement::gravityMultiplier, val, float);
+		DWORD64 Movement = read(this + 0x610, DWORD64);// public BaseMovement movement;
+		write(Movement + 0x84, val, float); // public float gravityMultiplier;
 	}
 
 	typedef Vector3(__stdcall* Transform)(UINT64);
@@ -1393,24 +1394,24 @@ public:
 	//	return BoneValue;
 	//}
 
-	private:
-		//DWORD64 this_ptr;
+private:
+	//DWORD64 this_ptr;
 
-		//Vector3 BasePlayer::GetBonePosition(BoneList BoneID)
-		//{
-		//	if (!this_ptr)return { 0.f,0.f, 0.f };
-		//	return GetPosition(GetTransform(BoneID));
-		//}
+	//Vector3 BasePlayer::GetBonePosition(BoneList BoneID)
+	//{
+	//	if (!this_ptr)return { 0.f,0.f, 0.f };
+	//	return GetPosition(GetTransform(BoneID));
+	//}
 
 };
 //extern BasePlayer myPlayer;
 class Projectile {
 public:
-	Vector3 currentPosition() { return read(this + O::Projectile::currentPosition, Vector3); }
-	void currentPosition(Vector3 d) { write(this + O::Projectile::currentPosition, d, Vector3); }
+	Vector3 currentPosition() { return read(this + 0x124, Vector3); } // internal Vector3 currentPosition;
+	void currentPosition(Vector3 d) { write(this + 0x124, d, Vector3); }// internal Vector3 currentPosition;
 };
 //Base Player
-class LPlayerBase 
+class LPlayerBase
 {
 public:
 	BasePlayer* BasePlayer = nullptr;
